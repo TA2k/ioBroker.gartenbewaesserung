@@ -1,0 +1,137 @@
+{
+    "common": {
+        "name": "gartenbewaesserung",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Gartenbewässerung",
+        "titleLang":{
+            "en": "garden irrigation",
+            "de": "Gartenbewässerung",
+            "ru": "орошение сада",
+            "pt": "irrigação de jardim",
+            "nl": "tuin irrigatie",
+            "fr": "irrigation de jardin",
+            "it": "irrigazione del giardino",
+            "es": "riego de jardines",
+            "pl": "nawadnianie ogrodu",
+            "zh-cn": "园林灌溉"
+          },
+        "desc": {
+            "en": "ioBroker adapter for garden irrigation",
+            "de": "ioBroker Adapter für Gartenbewässerung",
+            "ru": "ioBroker адаптер для полива сада",
+            "pt": "Adaptador ioBroker para irrigação de jardins",
+            "nl": "ioBroker-adapter voor tuinberegening",
+            "fr": "Adaptateur ioBroker pour l'irrigation des jardins",
+            "it": "Adattatore ioBroker per irrigazione da giardino",
+            "es": "Adaptador ioBroker para riego de jardines",
+            "pl": "Adapter ioBroker do nawadniania ogrodu",
+            "zh-cn": "ioBroker适配器，用于花园灌溉"
+          },
+        "authors": [
+            "tombox <tombox2020@gmail.com>"
+        ],
+        "keywords": [
+            "gartenbewässerung",
+            "gardena",
+            "ventile"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "gartenbewaesserung.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.gartenbewaesserung/master/admin/gartenbewaesserung.png",
+        "readme": "https://github.com/TA2k/ioBroker.gartenbewaesserung/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "garden",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=1.4.2"
+            }
+        ]
+    },
+    "native": {
+        "ventil1_active": false,
+        "ventil1_name": "",
+        "ventil1_state":"",
+        "ventil1_dauerstate_active":false,
+        "ventil1_dauerstate":"",
+        "ventil1_dauer_sec": false,
+        "ventil1_dauer": 5,
+        "ventil2_active": false,
+        "ventil2_name": "",
+        "ventil2_state":"",
+        "ventil2_dauerstate_active":false,
+        "ventil2_dauerstate":"",
+        "ventil2_dauer_sec": false,
+        "ventil2_dauer": 5,
+        "ventil3_active": false,
+        "ventil3_name": "",
+        "ventil3_state":"",
+        "ventil3_dauerstate_active":false,
+        "ventil3_dauerstate":"",
+        "ventil3_dauer_sec": false,
+        "ventil3_dauer": 5,
+        "ventil4_active": false,
+        "ventil4_name": "",
+        "ventil4_state":"",
+        "ventil4_dauerstate_active":false,
+        "ventil4_dauerstate":"",
+        "ventil4_dauer_sec": false,
+        "ventil4_dauer": 5,
+        "sonnenstand":false,
+        "minSonnenaufgang": 0,
+        "minSonnenuntergang":0,
+        "startzeit1_active": false,
+        "startzeit1": "07:00",
+        "startzeit2_active": false,
+        "startzeit2": "18:00",
+        "startzeit3_active": false,
+        "startzeit3": "14:00"
+
+
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

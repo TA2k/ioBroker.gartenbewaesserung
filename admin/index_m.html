@@ -1,0 +1,242 @@
+<html>
+
+<head>
+
+    <!-- Load ioBroker scripts and styles-->
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+    <!-- Load our own files -->
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type="text/javascript" src="words.js"></script>
+
+    <script type="text/javascript">
+        // This will be called by the admin adapter when the settings page loads
+        function load(settings, onChange) {
+            // example: select elements with id=key and class=value and insert value
+            if (!settings) return;
+            $('.value').each(function () {
+                var $key = $(this);
+                var id = $key.attr('id');
+                if ($key.attr('type') === 'checkbox') {
+                    // do not call onChange direct, because onChange could expect some arguments
+                    $key.prop('checked', settings[id])
+                        .on('change', () => onChange())
+                        ;
+                } else {
+                    // do not call onChange direct, because onChange could expect some arguments
+                    $key.val(settings[id])
+                        .on('change', () => onChange())
+                        .on('keyup', () => onChange())
+                        ;
+                }
+            });
+            onChange(false);
+            // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+            if (M) M.updateTextFields();
+        }
+
+        // This will be called by the admin adapter when the user presses the save button
+        function save(callback) {
+            // example: select elements with class=value and build settings object
+            var obj = {};
+            $('.value').each(function () {
+                var $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+            callback(obj);
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="m adapter-container">
+
+        <div class="row">
+            <div class="col s12 m4 l2">
+                <img src="gartenbewaesserung.png" class="logo">
+            </div>
+        </div>
+
+        <!-- Put your content here -->
+
+        <!-- For example columns with settings: -->
+        <div class="row"> Ventil 1
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil1_active" />
+                <label for="ventil1_active" class="translate">Ventil aktiv</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil1_name" />
+                <label for="ventil1_name" class="translate">Name z.B. Rasen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil1_state" />
+                <label for="ventil1_state" class="translate">ioBroker State zum schalten z.B. hm-rpc.0.QEQ0661312.1.STATE</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil1_dauerstate_active" />
+                <label for="ventil1_dauerstate_active" class="translate">ioBroker State für Dauer nutzen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil1_dauerstate" />
+                <label for="ventil1_dauerstate" class="translate">ioBroker State für Schaltdauer z.B. hm-rpc.0.QEQ0661312.1.ON_TIME</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil1_dauer_sec" />
+                <label for="ventil1_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den State senden</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil1_dauer" />
+                <label for="ventil1_dauer" class="translate">Bewässerungsdauer Minuten oder Sekunden</label>
+            </div>
+        </div>
+        <div class="row"> Ventil 2
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil2_active" />
+                <label for="ventil2_active" class="translate">Ventil aktiv</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil2_name" />
+                <label for="ventil2_name" class="translate">Name z.B. Rasen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil2_state" />
+                <label for="ventil2_state" class="translate">ioBroker State zum schalten z.B. hm-rpc.0.QEQ0661312.1.STATE</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil2_dauerstate_active" />
+                <label for="ventil2_dauerstate_active" class="translate">ioBroker State für Dauer nutzen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil2_dauerstate" />
+                <label for="ventil2_dauerstate" class="translate">ioBroker State für Schaltdauer z.B. hm-rpc.0.QEQ0661312.1.ON_TIME</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil2_dauer_sec" />
+                <label for="ventil2_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den State senden</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil2_dauer" />
+                <label for="ventil2_dauer" class="translate">Bewässerungsdauer Minuten oder Sekunden</label>
+            </div>
+        </div>
+        <div class="row"> Ventil 3
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil3_active" />
+                <label for="ventil3_active" class="translate">Ventil aktiv</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil3_name" />
+                <label for="ventil3_name" class="translate">Name z.B. Rasen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil3_state" />
+                <label for="ventil3_state" class="translate">ioBroker State zum schalten z.B. hm-rpc.0.QEQ0661312.1.STATE</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil3_dauerstate_active" />
+                <label for="ventil3_dauerstate_active" class="translate">ioBroker State für Dauer nutzen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil3_dauerstate" />
+                <label for="ventil3_dauerstate" class="translate">ioBroker State für Schaltdauer z.B. hm-rpc.0.QEQ0661312.1.ON_TIME</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil3_dauer_sec" />
+                <label for="ventil3_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den State senden</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil3_dauer" />
+                <label for="ventil3_dauer" class="translate">Bewässerungsdauer Minuten oder Sekunden</label>
+            </div>
+        </div>
+        <div class="row"> Ventil 3
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil4_active" />
+                <label for="ventil4_active" class="translate">Ventil aktiv</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil4_name" />
+                <label for="ventil4_name" class="translate">Name z.B. Rasen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil4_state" />
+                <label for="ventil4_state" class="translate">ioBroker State zum schalten z.B. hm-rpc.0.QEQ0661312.1.STATE</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil4_dauerstate_active" />
+                <label for="ventil4_dauerstate_active" class="translate">ioBroker State für Dauer nutzen</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil4_dauerstate" />
+                <label for="ventil4_dauerstate" class="translate">ioBroker State für Schaltdauer z.B. hm-rpc.0.QEQ0661312.1.ON_TIME</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="ventil4_dauer_sec" />
+                <label for="ventil4_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den State senden</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="ventil4_dauer" />
+                <label for="ventil4_dauer" class="translate">Bewässerungsdauer Minuten oder Sekunden</label>
+            </div>
+        </div>
+        <div class="row"> Bewässerungszeit
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="sonnenstand" />
+                <label for="sonnenstand" class="translate">Aktivieren in Abhängigkeit vom Sonnenstand</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="minSonnenaufgang" />
+                <label for="minSonnenaufgang" class="translate">Minuten nach Sonnenaufgang</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="minSonnenuntergang" />
+                <label for="minSonnenuntergang" class="translate">Minuten nach Sonnenuntergang</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="startzeit1_active" />
+                <label for="startzeit1_active" class="translate">Startzeit 1</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="startzeit1" />
+                <label for="startzeit1" class="translate">Startzeit 1 07:00 Uhr</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="startzeit2_active" />
+                <label for="startzeit2_active" class="translate">Startzeit 2</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="startzeit2" />
+                <label for="startzeit2" class="translate">Startzeit 2 18:00 Uhr</label>
+            </div>
+            <div class="col s8 input-field">
+                <input type="checkbox" class="value" id="startzeit3_active" />
+                <label for="startzeit3_active" class="translate">Startzeit 3</label>
+            </div>
+            <div class="col s6 input-field">
+                <input type="text" class="value" id="startzeit3" />
+                <label for="startzeit3" class="translate">Startzeit 3 14:00 Uhr</label>
+            </div>
+        </div>
+        <div class="row"> Benachrichtigung
+
+        </div>
+    </div>
+
+</body>
+
+</html>
