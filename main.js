@@ -132,7 +132,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 native: {},
             });
             const status = [
-                { name: "active", type: "String", unit: "" },
+                { name: "active", type: "string", unit: "" },
                 { name: "ende", type: "string", unit: "Uhr" },
                 { name: "restzeit", type: "number", unit: "min" },
                 { name: "restzeit_sek", type: "number", unit: "sek" },
@@ -172,6 +172,46 @@ class Gartenbewaesserung extends utils.Adapter {
             this.setState("config." + property, value, true);
         }
 
+        const status = [
+            { name: "bewaesserung_automatik", type: "boolean", unit: "" },
+            { name: "lautzeit_ende_uhrzeit", type: "string", unit: "Uhr" },
+            { name: "restzeit", type: "number", unit: "min" },
+            { name: "lautzeit_gesamt_in_sek", type: "number", unit: "sek" },
+            { name: "restzeit_sek", type: "number", unit: "sek" },
+            { name: "fortschritt", type: "number", unit: "%" },
+        ];
+        for (const property of status) {
+            await this.setObjectNotExistsAsync("status." + property.name, {
+                type: "state",
+                common: {
+                    name: property.name,
+                    role: "indicator",
+                    type: property.type,
+                    write: false,
+                    read: true,
+                    unit: property.unit || "",
+                },
+                native: {},
+            });
+        }
+        const controls = [
+            { name: "bewaesserung_aktiv", type: "boolean", unit: "" },
+            { name: "bewaesserung_pause", type: "boolean", unit: "" },
+        ];
+        for (const property of controls) {
+            await this.setObjectNotExistsAsync("control." + property.name, {
+                type: "state",
+                common: {
+                    name: property.name,
+                    role: "indicator",
+                    type: property.type,
+                    write: false,
+                    read: true,
+                    unit: property.unit || "",
+                },
+                native: {},
+            });
+        }
         this.stopVentile();
         this.subscribeStates("*");
     }
