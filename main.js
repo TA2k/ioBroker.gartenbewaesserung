@@ -33,63 +33,70 @@ class Gartenbewaesserung extends utils.Adapter {
         // Reset the connection indicator during startup
         this.setState("info.connection", false, true);
         // in this template all states changes inside the adapters namespace are subscribed
+
+        this.clockInterval = null;
+        this.getWeatherAndSunInterval = null;
+
         this.ventile = [];
-        if (this.config.ventil1_active) {
+        if (this.config.ventil1_enable) {
             this.ventile.push({
                 id: "ventil1",
                 name: this.config.ventil1_name,
-                active: this.config.ventil1_active,
+                enable: this.config.ventil1_enable,
                 dauer: this.config.ventil1_dauer,
                 dauer_sec: this.config.ventil1_dauer_sec,
                 state: this.config.ventil1_state,
                 dauerstate: this.config.ventil1_dauerstate,
-                dauerstate_active: this.config.ventil1_dauerstate_active,
+                dauerstate_enable: this.config.ventil1_dauerstate_enable,
             });
         }
-        if (this.config.ventil2_active) {
+        if (this.config.ventil2_enable) {
             this.ventile.push({
                 id: "ventil2",
                 name: this.config.ventil2_name,
-                active: this.config.ventil2_active,
+                enable: this.config.ventil2_enable,
                 dauer: this.config.ventil2_dauer,
                 dauer_sec: this.config.ventil2_dauer_sec,
                 state: this.config.ventil2_state,
                 dauerstate: this.config.ventil2_dauerstate,
-                dauerstate_active: this.config.ventil2_dauerstate_active,
+                dauerstate_enable: this.config.ventil2_dauerstate_enable,
             });
         }
-        if (this.config.ventil3_active) {
+        if (this.config.ventil3_enable) {
             this.ventile.push({
                 id: "ventil3",
                 name: this.config.ventil3_name,
-                active: this.config.ventil3_active,
+                enable: this.config.ventil3_enable,
                 dauer: this.config.ventil3_dauer,
                 dauer_sec: this.config.ventil3_dauer_sec,
                 state: this.config.ventil3_state,
                 dauerstate: this.config.ventil3_dauerstate,
-                dauerstate_active: this.config.ventil3_dauerstate_active,
+                dauerstate_enable: this.config.ventil3_dauerstate_enable,
             });
         }
-        if (this.config.ventil4_active) {
+        if (this.config.ventil4_enable) {
             this.ventile.push({
                 id: "ventil4",
                 name: this.config.ventil4_name,
-                active: this.config.ventil4_active,
+                enable: this.config.ventil4_enable,
                 dauer: this.config.ventil4_dauer,
                 dauer_sec: this.config.ventil4_dauer_sec,
                 state: this.config.ventil4_state,
                 dauerstate: this.config.ventil4_dauerstate,
-                dauerstate_active: this.config.ventil4_dauerstate_active,
+                dauerstate_enable: this.config.ventil4_dauerstate_enable,
             });
         }
-
+        if (this.ventile.length === 0) {
+            this.log.info("Kein Ventil aktiviert.");
+            return;
+        }
         this.ventile.forEach(async (item, index) => {
             index++;
             let stringIndex = index.toString();
             if (index < 10) {
                 stringIndex = "0" + index;
             }
-            await this.setObjectNotExistsAsync("ventil" + stringIndex, {
+            await this.setObjectNotExistsAsync("config.ventil" + stringIndex, {
                 type: "device",
                 common: {
                     name: "Ventil " + stringIndex,
@@ -113,6 +120,37 @@ class Gartenbewaesserung extends utils.Adapter {
                     native: {},
                 });
                 this.setState("config.ventil" + stringIndex + "." + property, value, true);
+            }
+            await this.setObjectNotExistsAsync("status.ventil" + stringIndex, {
+                type: "device",
+                common: {
+                    name: "Ventil " + stringIndex,
+                    role: "indicator",
+                    write: true,
+                    read: true,
+                },
+                native: {},
+            });
+            const status = [
+                { name: "active", type: "String", unit: "" },
+                { name: "ende", type: "string", unit: "Uhr" },
+                { name: "restzeit", type: "number", unit: "min" },
+                { name: "restzeit_sek", type: "number", unit: "sek" },
+                { name: "fortschritt", type: "number", unit: "%" },
+            ];
+            for (const property of status) {
+                await this.setObjectNotExistsAsync("status.ventil" + stringIndex + "." + property.name, {
+                    type: "state",
+                    common: {
+                        name: property.name,
+                        role: "indicator",
+                        type: property.type,
+                        write: false,
+                        read: true,
+                        unit: property.unit || "",
+                    },
+                    native: {},
+                });
             }
         });
         for (const property in this.config) {
@@ -155,6 +193,9 @@ class Gartenbewaesserung extends utils.Adapter {
      */
     onUnload(callback) {
         try {
+            clearInterval(this.clockInterval);
+            clearInterval(this.getWeatherAndSunInterval);
+
             this.log.info("cleaned everything up...");
             callback();
         } catch (e) {
