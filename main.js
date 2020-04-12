@@ -213,9 +213,31 @@ class Gartenbewaesserung extends utils.Adapter {
             });
         }
         this.stopVentile();
+        this.getWeatherAndSunData();
         this.subscribeStates("*");
     }
-
+    async getWeatherAndSunData() {
+        const states = [
+            { name: "sonnenaufgang", type: "string", unit: "Uhr" },
+            { name: "sonnenuntergang", type: "string", unit: "Uhr" },
+            { name: "maxTempVorhersage", type: "number", unit: "°c" },
+            { name: "regenMengeVorhersage", type: "number", unit: "mm" },
+        ];
+        for (const state of states) {
+            await this.setObjectNotExistsAsync("status." + state.name, {
+                type: "state",
+                common: {
+                    name: state.name,
+                    role: "indicator",
+                    type: state.type,
+                    write: false,
+                    read: true,
+                    unit: state.unit || "",
+                },
+                native: {},
+            });
+        }
+    }
     stopVentile() {
         this.ventile &&
             this.ventile.forEach(async (item) => {
