@@ -1,25 +1,19 @@
 {
-  "name": "iobroker.gartenbewaesserung",
-  "version": "0.0.1",
-  "description": "ioBroker Adapter für Gartenbewässerung",
   "author": {
     "name": "tombox",
     "email": "tombox2020@gmail.com"
   },
-  "homepage": "https://github.com/TA2k/ioBroker.gartenbewaesserung",
-  "license": "MIT",
-  "keywords": [
-    "gartenbewässerung",
-    "gardena",
-    "ventile"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TA2k/ioBroker.gartenbewaesserung"
+  "bugs": {
+    "url": "https://github.com/TA2k/ioBroker.gartenbewaesserung/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
-    "@iobroker/adapter-core": "^2.2.1"
+    "@iobroker/adapter-core": "^2.2.1",
+    "moment": "^2.24.0",
+    "suncalc": "^1.8.0"
   },
+  "deprecated": false,
+  "description": "ioBroker Adapter für Gartenbewässerung",
   "devDependencies": {
     "@iobroker/testing": "^2.1.0",
     "@types/chai": "^4.2.11",
@@ -37,20 +31,29 @@
     "gulp": "^4.0.2",
     "mocha": "^7.1.1",
     "proxyquire": "^2.1.3",
-    "sinon-chai": "^3.5.0",
-    "sinon": "^8.1.1"
+    "sinon": "^8.1.1",
+    "sinon-chai": "^3.5.0"
   },
+  "homepage": "https://github.com/TA2k/ioBroker.gartenbewaesserung",
+  "keywords": [
+    "gartenbewässerung",
+    "gardena",
+    "ventile"
+  ],
+  "license": "MIT",
   "main": "main.js",
+  "name": "iobroker.gartenbewaesserung",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TA2k/ioBroker.gartenbewaesserung.git"
+  },
   "scripts": {
+    "lint": "eslint",
+    "test": "npm run test:js && npm run test:package",
+    "test:integration": "mocha test/integration --exit",
     "test:js": "mocha --opts test/mocha.custom.opts",
     "test:package": "mocha test/package --exit",
-    "test:unit": "mocha test/unit --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:js && npm run test:package",
-    "lint": "eslint"
+    "test:unit": "mocha test/unit --exit"
   },
-  "bugs": {
-    "url": "https://github.com/TA2k/ioBroker.gartenbewaesserung/issues"
-  },
-  "readmeFilename": "README.md"
+  "version": "0.0.1"
 }
