@@ -441,6 +441,11 @@ class Gartenbewaesserung extends utils.Adapter {
                                 await this.setForeignStateAsync(item.state, false).catch((err) => {
                                     if (err) this.log.error(err);
                                 });
+                                this.updateVentileStatus();
+                                this.setState("status." + item.id + ".active", false, false);
+                                this.setState("status." + item.id + ".ende", "", false);
+                                item.active = false;
+                                item.end = "";
                             }
                             if (item.timeout) {
                                 clearTimeout(item.timeout);
@@ -464,6 +469,14 @@ class Gartenbewaesserung extends utils.Adapter {
             await this.setForeignStateAsync(ventil.state, true).catch((err) => {
                 if (err) this.log.error(err);
             });
+            const end = moment().add(ventil.dauer * 60 * 1000, "millisecond");
+            this.log.info("Start " + ventil.id);
+            this.setForeignState(ventil.state, true, false);
+            this.setState("status." + ventil.id + ".active", true, false);
+            this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
+            ventil.active = true;
+            ventil.end = end;
+
             this.log.info("Ventil: " + ventil.id + " will stop in " + ventil.dauer + "min");
             ventil.timeout = setTimeout(() => {
                 this.updateVentileStatus();
@@ -481,7 +494,6 @@ class Gartenbewaesserung extends utils.Adapter {
     onUnload(callback) {
         try {
             this.stopVentile();
-            s;
             this.stopBewaesserung();
             clearInterval(this.clockInterval);
             clearInterval(this.getWeatherAndSunInterval);
@@ -505,7 +517,7 @@ class Gartenbewaesserung extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state
      */
     async onStateChange(id, state) {
-        if (state) {
+        if (state && !state.ack) {
             if (id.indexOf(".control.") !== -1) {
                 if (id.indexOf(".bewaesserung_aktiv") !== -1) {
                     if (state.val) {
@@ -518,17 +530,29 @@ class Gartenbewaesserung extends utils.Adapter {
                     if (state.val) {
                         this.startVentil("ventil1");
                     } else {
-                        this.stopVentile;
+                        this.stopVentile("ventil1");
                     }
                 }
                 if (id.indexOf(".ventil2_aktiv") !== -1) {
-                    this.startVentil("ventil2");
+                    if (state.val) {
+                        this.startVentil("ventil2");
+                    } else {
+                        this.stopVentile("ventil2");
+                    }
                 }
                 if (id.indexOf(".ventil3_aktiv") !== -1) {
-                    this.startVentil("ventil3");
+                    if (state.val) {
+                        this.startVentil("ventil3");
+                    } else {
+                        this.stopVentile("ventil3");
+                    }
                 }
                 if (id.indexOf(".ventil4_aktiv") !== -1) {
-                    this.startVentil("ventil4");
+                    if (state.val) {
+                        this.startVentil("ventil4");
+                    } else {
+                        this.stopVentile("ventil4");
+                    }
                 }
             }
             if (id.indexOf(".config.") !== -1) {
