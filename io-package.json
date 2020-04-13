@@ -117,6 +117,7 @@
     "startzeit3": "14:00",
     "tempforecast": "daswetter.0.NextHours.Location_1.Day_1.tempmax_value",
     "rainforecast": "daswetter.0.NextHours.Location_1.Day_1.rain_value",
+    "rainforecastnext": "daswetter.0.NextHours.Location_1.Day_2.rain_value",
     "temptresh": 24,
     "raintresh": 5,
     "zeitplan_enabled": false,

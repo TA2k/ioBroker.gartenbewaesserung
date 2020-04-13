@@ -39,13 +39,40 @@ class Gartenbewaesserung extends utils.Adapter {
         this.clockInterval = null;
         this.pauseTime = 5000;
         this.bewaesserung_automatik = false;
-        this.ventileTimeouts = [];
+        this.bewaesserungTimeouts = [];
         this.activeVentil = { name: "", end: "", dauer: 0 };
-        this.bewaesserungEnd = "";
+        this.bewaesserungEnd = null;
+        this.tempAndRain = {};
         this.getWeatherAndSunInterval = null;
         this.currentLong = "13.404954";
         this.curentLang = "52.520008";
         this.ventile = [];
+
+        if (this.config.zeitplan_enabled) {
+            this.zeitplanArray = [];
+            if (this.config.zeitplan_sonntag) {
+                this.zeitplanArray.push(0);
+            }
+            if (this.config.zeitplan_montag) {
+                this.zeitplanArray.push(1);
+            }
+            if (this.config.zeitplan_dienstag) {
+                this.zeitplanArray.push(2);
+            }
+            if (this.config.zeitplan_mittwoch) {
+                this.zeitplanArray.push(3);
+            }
+            if (this.config.zeitplan_donnerstag) {
+                this.zeitplanArray.push(4);
+            }
+            if (this.config.zeitplan_freitag) {
+                this.zeitplanArray.push(5);
+            }
+            if (this.config.zeitplan_samstag) {
+                this.zeitplanArray.push(6);
+            }
+        }
+
         if (this.config.ventil1_enable) {
             this.ventile.push({
                 id: "ventil1",
@@ -219,7 +246,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 type: "state",
                 common: {
                     name: property.name,
-                    role: "indicator",
+                    role: "button",
                     type: property.type,
                     write: false,
                     read: true,
@@ -249,43 +276,66 @@ class Gartenbewaesserung extends utils.Adapter {
             this.checkForBewaesserungStart();
             this.updateVentileStatus();
         }, 10 * 1000); //10sec
+
+        this.setState("info.connection", true, true);
     }
     async checkForBewaesserungStart() {
         if (!this.bewaesserung_automatik) {
-            if (this.config.sonnenstand) {
-                const sunrise = moment(this.times.sunrise).add(this.config.minSonnenaufgang, "minute");
-                const sunset = moment(this.times.sunset).add(this.config.minSonnenuntergang, "minute");
-                if (moment().isSame(sunrise, "minute") || moment().isSame(sunset, "minute")) {
-                    this.startBewaesserung();
+            if (!this.config.temptresh || this.tempAndRain.temp >= this.config.temptresh) {
+                if (!this.config.raintresh || this.tempAndRain.rain <= this.config.raintresh) {
+                    if (!this.config.raintreshnext || this.tempAndRain.rainnext <= this.config.raintreshnext) {
+                        if (!this.config.zeitplan_enabled || this.zeitplanArray.indexOf(moment().day()) !== -1) {
+                            if (this.config.sonnenstand) {
+                                const sunrise = moment(this.times.sunrise).add(this.config.minSonnenaufgang, "minute");
+                                const sunset = moment(this.times.sunset).add(this.config.minSonnenuntergang, "minute");
+                                if (moment().isSame(sunrise, "minute") || moment().isSame(sunset, "minute")) {
+                                    this.startBewaesserung();
+                                }
+                            }
+
+                            if (
+                                (this.config.startzeit1_enable && moment().isSame(moment(this.config.startzeit1, "hh:mm"), "minute")) ||
+                                (this.config.startzeit2_enable && moment().isSame(moment(this.config.startzeit2, "hh:mm"), "minute")) ||
+                                (this.config.startzeit3_enable && moment().isSame(moment(this.config.startzeit3, "hh:mm"), "minute"))
+                            ) {
+                                this.startBewaesserung();
+                            }
+                        } else {
+                            this.log.info("Bewässerung nicht gestartet weil der Zeitplan für den heutigen Wochentag deaktiviert ist.");
+                        }
+                    } else {
+                        this.log.info("Bewässerung nicht gestartet wegen Regen Schwellwert für Morgen " + this.tempAndRain.rainnext);
+                    }
+                } else {
+                    this.log.info("Bewässerung nicht gestartet wegen Regen Schwellwert " + this.tempAndRain.rain);
                 }
+            } else {
+                this.log.info("Bewässerung nicht gestartet wegen Temperatur Schwellwert " + this.tempAndRain.temp);
             }
-        }
-        if (
-            (this.config.startzeit1_enable && moment().isSame(moment(this.config.startzeit1, "hh:mm"), "minute")) ||
-            (this.config.startzeit2_enable && moment().isSame(moment(this.config.startzeit2, "hh:mm"), "minute")) ||
-            (this.config.startzeit3_enable && moment().isSame(moment(this.config.startzeit3, "hh:mm"), "minute"))
-        ) {
-            this.startBewaesserung();
         }
     }
     async updateVentileStatus() {
-        if (this.activeVentil && this.activeVentil.name) {
-            this.setState("status." + this.activeVentil.name + ".restzeit", moment().subtract(this.activeVentil.end).minute());
-            this.setState("status." + this.activeVentil.name + ".restzeit_sek", moment().subtract(this.activeVentil.end).second());
-            this.setState("status." + this.activeVentil.name + ".fortschritt", (this.activeVentil.dauer * 100) / moment().subtract(this.activeVentil.end).second());
-        }
+        this.ventile.forEach((ventil) => {
+            if (ventil.active) {
+                this.setState("status." + ventil.id + ".restzeit", moment.duration(ventil.end.diff(moment())).asMinutes().toFixed(2));
+                this.setState("status." + ventil.id + ".restzeit_sek", moment.duration(ventil.end.diff(moment())).asSeconds().toFixed(0));
+                this.setState("status." + ventil.id + ".fortschritt", (100 - (100 * moment.duration(ventil.end.diff(moment())).asSeconds()) / (ventil.dauer * 60)).toFixed(0));
+            }
+        });
+
         if (this.bewaesserungEnd) {
-            this.setState("status.restzeit", moment().subtract(this.bewaesserungEnd).minute());
-            this.setState("status.restzeit_sek", moment().subtract(this.bewaesserungEnd).second());
-            this.setState("status.fortschritt", ((this.currentTimeoutTime / 1000) * 100) / moment().subtract(this.bewaesserungEnd).second());
+            this.setState("status.restzeit", moment.duration(this.bewaesserungEnd.diff(moment())).asMinutes().toFixed(2));
+            this.setState("status.restzeit_sek", moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds().toFixed(0));
+            this.setState("status.fortschritt", (100 - (100 * moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds()) / (this.currentTimeoutTime / 1000)).toFixed(0));
         }
     }
     async startBewaesserung() {
         await this.stopBewaesserung();
         this.bewaesserung_automatik = true;
+        this.log.info("Start Bewaesserung");
         this.setState("status.bewaesserung_automatik", true, true);
         this.currentTimeoutTime = 0;
-        for (const ventil in this.ventile) {
+        for (const ventil of this.ventile) {
             let dauer = ventil.dauer * 60;
             if (ventil.dauer_sec) {
                 dauer = ventil.dauer;
@@ -295,43 +345,48 @@ class Gartenbewaesserung extends utils.Adapter {
             const timeoutIdStart = setTimeout(() => {
                 const end = moment().add(stopTime, "millisecond");
                 this.log.info("Start " + ventil.id);
-                this.setState(ventil.state, true, false);
+                this.setForeignState(ventil.state, true, false);
                 this.setState("status." + ventil.id + ".active", true, false);
                 this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
-                this.activeVentil.name = ventil.id;
-                this.activeVentil.end = end;
-                this.activeVentil.dauer = dauer;
+                ventil.active = true;
+                ventil.end = end;
             }, this.currentTimeoutTime);
-            this.ventileTimeouts.push(timeoutIdStart);
+            this.bewaesserungTimeouts.push(timeoutIdStart);
 
             this.log.info("Stop " + ventil.id + " in " + stopTime / 1000 + "sek");
             const timeoutIdStop = setTimeout(() => {
                 this.log.info("Stop " + ventil.id);
-                this.setState(ventil.state, false, false);
+                this.updateVentileStatus();
+                this.setForeignState(ventil.state, false, false);
 
                 this.setState("status." + ventil.id + ".active", false, false);
                 this.setState("status." + ventil.id + ".ende", "", false);
-                this.activeVentil.name = "";
-                this.activeVentil.end = "";
-                this.activeVentil.dauer = 0;
+                ventil.active = false;
+                ventil.end = "";
+                if (this.ventile.indexOf(ventil) === this.ventile.length - 1) {
+                    this.stopBewaesserung();
+                }
             }, stopTime);
-            this.ventileTimeouts.push(timeoutIdStop);
-            this.currentTimeoutTime = stopTime + this.pauseTime;
+            this.bewaesserungTimeouts.push(timeoutIdStop);
+            if (this.ventile.indexOf(ventil) !== this.ventile.length - 1) {
+                this.currentTimeoutTime = stopTime + this.pauseTime;
+            }
         }
         this.bewaesserungEnd = moment().add(this.currentTimeoutTime, "millisecond");
 
         this.setState("status.lautzeit_ende_uhrzeit", this.bewaesserungEnd.toLocaleString());
         this.setState("status.lautzeit_gesamt_in_sek", this.bewaesserungEnd.seconds());
+        this.updateVentileStatus();
     }
     stopBewaesserung() {
         return new Promise(async (resolve, reject) => {
             this.stopVentile();
             this.bewaesserungEnd = "";
-            for (const timeout in this.ventileTimeouts) {
+            for (const timeout in this.bewaesserungTimeouts) {
                 clearTimeout(timeout);
             }
             this.bewaesserung_automatik = false;
-            await this.setStateAsyncs("status.bewaesserung_automatik", false, true);
+            await this.setStateAsync("status.bewaesserung_automatik", false, true);
             resolve();
         });
     }
@@ -340,16 +395,32 @@ class Gartenbewaesserung extends utils.Adapter {
             if (this.config.tempforecast) {
                 await this.getForeignStateAsync(this.config.tempforecast)
                     .then((obj) => {
-                        obj && this.setState("status.tempforecast", obj.val, true);
+                        if (obj) {
+                            this.setState("status.tempforecast", obj.val, true);
+                            this.tempAndRain.temp = obj.val;
+                        }
                     })
                     .catch((error) => this.log.error("Cannot receive temp forecast from:" + this.config.tempforecast + " " + JSON.stringify(error)));
             }
             if (this.config.rainforecast) {
                 await this.getForeignStateAsync(this.config.rainforecast)
                     .then((obj) => {
-                        obj && this.setState("status.rainforecast", obj.val, true);
+                        if (obj) {
+                            this.setState("status.rainforecast", obj.val, true);
+                            this.tempAndRain.rain = obj.val;
+                        }
                     })
                     .catch((error) => this.log.error("Cannot receive rain forecast from:" + this.config.rainforecast + " " + JSON.stringify(error)));
+            }
+            if (this.config.rainforecastnext) {
+                await this.getForeignStateAsync(this.config.rainforecastnext)
+                    .then((obj) => {
+                        if (obj) {
+                            this.setState("status.rainforecastnext", obj.val, true);
+                            this.tempAndRain.rainnext = obj.val;
+                        }
+                    })
+                    .catch((error) => this.log.error("Cannot receive rain forecast from:" + this.config.rainforecastnext + " " + JSON.stringify(error)));
             }
             this.times = SunCalc.getTimes(new Date(), this.currentLat, this.currentLong);
             this.setState("status.sonnenaufgang", this.times.sunrise.toTimeString());
@@ -358,26 +429,69 @@ class Gartenbewaesserung extends utils.Adapter {
         });
     }
 
-    stopVentile() {
-        this.ventile &&
-            this.ventile.forEach(async (item) => {
-                if (item.state) {
-                    this.setState(item.state, false, (err) => {
-                        if (err) this.log.error(err);
+    stopVentile(id) {
+        return new Promise(async (resolve, reject) => {
+            const promiseArray = [];
+            this.ventile &&
+                this.ventile.forEach(async (item) => {
+                    const promise = new Promise(async (resolve, reject) => {
+                        if (!id || item.id === id) {
+                            if (item.state) {
+                                this.log.info("Stop Ventil: " + item.id);
+                                await this.setForeignStateAsync(item.state, false).catch((err) => {
+                                    if (err) this.log.error(err);
+                                });
+                            }
+                            if (item.timeout) {
+                                clearTimeout(item.timeout);
+                            }
+                        }
+                        resolve();
                     });
-                }
+                    promiseArray.push(promise);
+                });
+            Promise.all(promiseArray).then(() => {
+                resolve();
             });
+        });
     }
-
+    async startVentil(id) {
+        this.stopVentile(id).then(async () => {
+            const ventil = this.ventile.find((obj) => {
+                return obj.id === id;
+            });
+            this.log.info("Start Ventil: " + ventil.id);
+            await this.setForeignStateAsync(ventil.state, true).catch((err) => {
+                if (err) this.log.error(err);
+            });
+            this.log.info("Ventil: " + ventil.id + " will stop in " + ventil.dauer + "min");
+            ventil.timeout = setTimeout(() => {
+                this.updateVentileStatus();
+                this.setState("status." + id + ".active", false, false);
+                this.setState("status." + id + ".ende", "", false);
+                this.stopVentile(id);
+            }, ventil.dauer * 60 * 1000);
+            this.updateVentileStatus();
+        });
+    }
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      * @param {() => void} callback
      */
     onUnload(callback) {
         try {
+            this.stopVentile();
+            s;
+            this.stopBewaesserung();
             clearInterval(this.clockInterval);
             clearInterval(this.getWeatherAndSunInterval);
 
+            this.ventile.forEach(async (item) => {
+                if (item.timeout) clearTimeout(item.timeout);
+            });
+            this.bewaesserungTimeouts.forEach(async (item) => {
+                if (item) clearTimeout(item);
+            });
             this.log.info("cleaned everything up...");
             callback();
         } catch (e) {
@@ -390,9 +504,51 @@ class Gartenbewaesserung extends utils.Adapter {
      * @param {string} id
      * @param {ioBroker.State | null | undefined} state
      */
-    onStateChange(id, state) {
+    async onStateChange(id, state) {
         if (state) {
-            // The state was changed
+            if (id.indexOf(".control.") !== -1) {
+                if (id.indexOf(".bewaesserung_aktiv") !== -1) {
+                    if (state.val) {
+                        this.startBewaesserung();
+                    } else {
+                        this.stopBewaesserung();
+                    }
+                }
+                if (id.indexOf(".ventil1_aktiv") !== -1) {
+                    if (state.val) {
+                        this.startVentil("ventil1");
+                    } else {
+                        this.stopVentile;
+                    }
+                }
+                if (id.indexOf(".ventil2_aktiv") !== -1) {
+                    this.startVentil("ventil2");
+                }
+                if (id.indexOf(".ventil3_aktiv") !== -1) {
+                    this.startVentil("ventil3");
+                }
+                if (id.indexOf(".ventil4_aktiv") !== -1) {
+                    this.startVentil("ventil4");
+                }
+            }
+            if (id.indexOf(".config.") !== -1) {
+                const idArray = id.split(".");
+                const configId = idArray[idArray.length - 1];
+                const ventil = idArray[idArray.length - 2];
+                const adapterConfig = "system.adapter." + this.name + "." + this.instance;
+                const config = await this.getForeignObjectAsync(adapterConfig);
+                if (ventil.indexOf("ventil") !== -1) {
+                    config.native[ventil + "_" + configId] = state.val;
+                    this.config[ventil + "_" + configId] = state.val;
+                    await this.setForeignObjectAsync(adapterConfig, config);
+                    this.log.info("Set: " + ventil + "_" + configId + ": " + state.val);
+                } else {
+                    config.native[configId] = state.val;
+                    this.config[configId] = state.val;
+                    await this.setForeignObjectAsync(adapterConfig, config);
+                    this.log.info("Set: " + configId + ": " + state.val);
+                }
+            }
         } else {
             // The state was deleted
         }
