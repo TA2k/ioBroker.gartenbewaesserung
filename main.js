@@ -178,7 +178,7 @@ class Gartenbewaesserung extends utils.Adapter {
                     common: {
                         name: property,
                         role: "indicator",
-                        type: typeof value,
+                        type: typeof value || "mixed",
                         write: true,
                         read: true,
                     },
@@ -229,7 +229,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 common: {
                     name: property,
                     role: "indicator",
-                    type: typeof value,
+                    type: typeof value || "mixed",
                     write: false,
                     read: true,
                 },
