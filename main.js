@@ -79,7 +79,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 name: this.config.ventil1_name,
                 enable: this.config.ventil1_enable,
                 dauer: this.config.ventil1_dauer,
-                dauer_sec: this.config.ventil1_dauer_sec,
+                dauerstate_mult: this.config.ventil1_dauerstate_mult,
                 state: this.config.ventil1_state,
                 dauerstate: this.config.ventil1_dauerstate,
 
@@ -87,6 +87,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 dauer_in_state: this.config.ventil1_dauer_in_state,
                 feuchtigkeit: this.config.ventil1_feuchtigkeit,
                 feuchtigkeit_tresh: this.config.ventil1_feuchtigkeit_tresh,
+                feuchtigkeit_falsefeucht: this.config.ventil1_feuchtigkeit_falsefeucht,
             });
         }
         if (this.config.ventil2_enable) {
@@ -95,7 +96,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 name: this.config.ventil2_name,
                 enable: this.config.ventil2_enable,
                 dauer: this.config.ventil2_dauer,
-                dauer_sec: this.config.ventil2_dauer_sec,
+                dauerstate_mult: this.config.ventil2_dauerstate_mult,
                 state: this.config.ventil2_state,
                 dauerstate: this.config.ventil2_dauerstate,
 
@@ -103,6 +104,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 dauer_in_state: this.config.ventil2_dauer_in_state,
                 feuchtigkeit: this.config.ventil2_feuchtigkeit,
                 feuchtigkeit_tresh: this.config.ventil2_feuchtigkeit_tresh,
+                feuchtigkeit_falsefeucht: this.config.ventil2_feuchtigkeit_falsefeucht,
             });
         }
         if (this.config.ventil3_enable) {
@@ -111,7 +113,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 name: this.config.ventil3_name,
                 enable: this.config.ventil3_enable,
                 dauer: this.config.ventil3_dauer,
-                dauer_sec: this.config.ventil3_dauer_sec,
+                dauerstate_mult: this.config.ventil3_dauerstate_mult,
                 state: this.config.ventil3_state,
                 dauerstate: this.config.ventil3_dauerstate,
 
@@ -119,6 +121,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 dauer_in_state: this.config.ventil3_dauer_in_state,
                 feuchtigkeit: this.config.ventil3_feuchtigkeit,
                 feuchtigkeit_tresh: this.config.ventil3_feuchtigkeit_tresh,
+                feuchtigkeit_falsefeucht: this.config.ventil3_feuchtigkeit_falsefeucht,
             });
         }
         if (this.config.ventil4_enable) {
@@ -127,13 +130,14 @@ class Gartenbewaesserung extends utils.Adapter {
                 name: this.config.ventil4_name,
                 enable: this.config.ventil4_enable,
                 dauer: this.config.ventil4_dauer,
-                dauer_sec: this.config.ventil4_dauer_sec,
+                dauerstate_mult: this.config.ventil4_dauerstate_mult,
                 state: this.config.ventil4_state,
                 dauerstate: this.config.ventil4_dauerstate,
                 dauer_in_state_mult: this.config.ventil4_dauer_in_state_mult,
                 dauer_in_state: this.config.ventil4_dauer_in_state,
                 feuchtigkeit: this.config.ventil4_feuchtigkeit,
                 feuchtigkeit_tresh: this.config.ventil4_feuchtigkeit_tresh,
+                feuchtigkeit_falsefeucht: this.config.ventil4_feuchtigkeit_falsefeucht,
             });
         }
         if (this.config.ventil5_enable) {
@@ -142,13 +146,30 @@ class Gartenbewaesserung extends utils.Adapter {
                 name: this.config.ventil5_name,
                 enable: this.config.ventil5_enable,
                 dauer: this.config.ventil5_dauer,
-                dauer_sec: this.config.ventil5_dauer_sec,
+                dauerstate_mult: this.config.ventil5_dauerstate_mult,
                 state: this.config.ventil5_state,
                 dauerstate: this.config.ventil5_dauerstate,
                 dauer_in_state_mult: this.config.ventil5_dauer_in_state_mult,
                 dauer_in_state: this.config.ventil5_dauer_in_state,
                 feuchtigkeit: this.config.ventil5_feuchtigkeit,
                 feuchtigkeit_tresh: this.config.ventil5_feuchtigkeit_tresh,
+                feuchtigkeit_falsefeucht: this.config.ventil5_feuchtigkeit_falsefeucht,
+            });
+        }
+        if (this.config.ventil6_enable) {
+            this.ventile.push({
+                id: "ventil6",
+                name: this.config.ventil6_name,
+                enable: this.config.ventil6_enable,
+                dauer: this.config.ventil6_dauer,
+                dauerstate_mult: this.config.ventil6_dauerstate_mult,
+                state: this.config.ventil6_state,
+                dauerstate: this.config.ventil6_dauerstate,
+                dauer_in_state_mult: this.config.ventil6_dauer_in_state_mult,
+                dauer_in_state: this.config.ventil6_dauer_in_state,
+                feuchtigkeit: this.config.ventil6_feuchtigkeit,
+                feuchtigkeit_tresh: this.config.ventil6_feuchtigkeit_tresh,
+                feuchtigkeit_falsefeucht: this.config.ventil6_feuchtigkeit_falsefeucht,
             });
         }
         if (this.ventile.length === 0) {
@@ -230,7 +251,7 @@ class Gartenbewaesserung extends utils.Adapter {
                     name: property,
                     role: "indicator",
                     type: typeof value || "mixed",
-                    write: false,
+                    write: true,
                     read: true,
                 },
                 native: {},
@@ -274,6 +295,7 @@ class Gartenbewaesserung extends utils.Adapter {
             { name: "ventil3_aktiv", type: "boolean", unit: "" },
             { name: "ventil4_aktiv", type: "boolean", unit: "" },
             { name: "ventil5_aktiv", type: "boolean", unit: "" },
+            { name: "ventil6_aktiv", type: "boolean", unit: "" },
         ];
         for (const property of controls) {
             await this.setObjectNotExistsAsync("control." + property.name, {
@@ -282,7 +304,7 @@ class Gartenbewaesserung extends utils.Adapter {
                     name: property.name,
                     role: "button",
                     type: property.type,
-                    write: false,
+                    write: true,
                     read: true,
                     unit: property.unit || "",
                 },
@@ -315,9 +337,9 @@ class Gartenbewaesserung extends utils.Adapter {
     }
     async checkForBewaesserungStart() {
         if (!this.bewaesserung_automatik) {
-            if (!this.config.temptresh || this.tempAndRain.temp >= this.config.temptresh) {
-                if (!this.config.raintresh || this.tempAndRain.rain <= this.config.raintresh) {
-                    if (!this.config.raintreshnext || this.tempAndRain.rainnext <= this.config.raintreshnext) {
+            if (!this.config.temptresh || this.tempAndRain.temp === undefined || this.tempAndRain.temp >= this.config.temptresh) {
+                if (!this.config.raintresh || this.tempAndRain.rain === undefined || this.tempAndRain.rain <= this.config.raintresh) {
+                    if (!this.config.raintreshnext || this.tempAndRain.rainnext === undefined || this.tempAndRain.rainnext <= this.config.raintreshnext) {
                         if (!this.config.zeitplan_enabled || this.zeitplanArray.indexOf(moment().day()) !== -1) {
                             if (this.config.sonnenstand) {
                                 const sunrise = moment(this.times.sunrise).add(this.config.minSonnenaufgang, "minute");
@@ -378,10 +400,12 @@ class Gartenbewaesserung extends utils.Adapter {
         }
         for (const ventil of this.ventile) {
             let dauer = ventil.dauer * 60;
-            if (ventil.dauer_sec) {
-                dauer = ventil.dauer;
-            }
+
             if (this.tempAndRain[ventil.id + "feuchtigkeit"] !== undefined) {
+                if (ventil.feuchtigkeit_falsefeucht && this.tempAndRain[ventil.id + "feuchtigkeit"] === false) {
+                    this.log.info("Feuchtigkeitsensor ist False, Dauer auf 0 gesetzt: " + this.tempAndRain[ventil.id + "feuchtigkeit"]);
+                    dauer = 0;
+                }
                 if (this.tempAndRain[ventil.id + "feuchtigkeit"] >= ventil.feuchtigkeit_tresh) {
                     this.log.info("Feuchtigkeit hat Schwellwert erreicht Dauer auf 0 gesetzt: " + this.tempAndRain[ventil.id + "feuchtigkeit"]);
                     dauer = 0;
@@ -389,34 +413,42 @@ class Gartenbewaesserung extends utils.Adapter {
             }
             const ventilStopTime = this.currentTimeoutTime + dauer * 1000;
             this.stopTime = this.currentTimeoutTime + dauer * 1000;
-            this.log.info("Start " + ventil.id + " in " + this.currentTimeoutTime / 1000 + "sek");
-            const timeoutIdStart = setTimeout(() => {
-                const end = moment().add(ventilStopTime, "millisecond");
-                this.log.info("Start " + ventil.id);
-                if (ventil.dauer_in_state) {
-                    this.setForeignState(ventil.state, ventil.dauer * ventil.dauer_in_state_mult, false);
-                } else {
-                    this.setForeignState(ventil.state, true, false);
-                }
-                if (ventil.dauerstate) {
-                    let multi = 1;
-                    if (ventil.dauer_sec) {
-                        multi = 60;
+            if (dauer > 0) {
+                this.log.info("Start " + ventil.id + " in " + this.currentTimeoutTime / 1000 + "sek");
+                const timeoutIdStart = setTimeout(() => {
+                    const end = moment().add(ventilStopTime, "millisecond");
+                    this.log.info("Start " + ventil.id);
+                    if (ventil.dauer_in_state) {
+                        this.setForeignState(ventil.state, ventil.dauer * ventil.dauer_in_state_mult, false);
+                    } else {
+                        this.setForeignState(ventil.state, true, false);
                     }
-                    this.setForeignState(ventil.dauerstate, ventil.dauer * multi, false);
-                }
-                this.setState("status." + ventil.id + ".active", true, false);
-                this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
-                ventil.active = true;
-                ventil.end = end;
-            }, this.currentTimeoutTime);
-            this.bewaesserungTimeouts.push(timeoutIdStart);
+                    if (ventil.dauerstate) {
+                        let multi = 1;
+                        if (ventil.dauerstate_mult) {
+                            multi = ventil.dauerstate_mult;
+                        }
+                        this.setForeignState(ventil.dauerstate, ventil.dauer * multi, false);
+                    }
+                    this.setState("status." + ventil.id + ".active", true, false);
+                    this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
+                    ventil.active = true;
+                    ventil.end = end;
+                }, this.currentTimeoutTime);
+                this.bewaesserungTimeouts.push(timeoutIdStart);
+            }
 
             this.log.info("Stop " + ventil.id + " in " + ventilStopTime / 1000 + "sek");
             const timeoutIdStop = setTimeout(() => {
                 this.log.info("Stop " + ventil.id);
                 this.updateVentileStatus();
-                this.setForeignState(ventil.state, false, false);
+                let stopValue = false;
+                if (ventil.state.indexOf("smartgarden.") === 0 || ventil.state.indexOf("gardena.") === 0) {
+                    this.log.debug("Use stop value: STOP_UNTIL_NEXT_TASK");
+                    stopValue = "STOP_UNTIL_NEXT_TASK";
+                }
+
+                this.setForeignState(ventil.state, stopValue, false);
 
                 this.setState("status." + ventil.id + ".active", false, false);
                 this.setState("status." + ventil.id + ".ende", "", false);
@@ -516,7 +548,13 @@ class Gartenbewaesserung extends utils.Adapter {
                         if (!id || item.id === id) {
                             if (item.state) {
                                 this.log.info("Stop Ventil: " + item.id);
-                                await this.setForeignStateAsync(item.state, false).catch((err) => {
+                                let stopValue = false;
+                                if (item.state.indexOf("smartgarden.") === 0 || item.state.indexOf("gardena.") === 0) {
+                                    this.log.debug("Use stop value: STOP_UNTIL_NEXT_TASK");
+                                    stopValue = "STOP_UNTIL_NEXT_TASK";
+                                }
+
+                                await this.setForeignStateAsync(item.state, stopValue).catch((err) => {
                                     if (err) this.log.error(err);
                                 });
                                 if (this.config.pumpen_state) {
@@ -555,7 +593,7 @@ class Gartenbewaesserung extends utils.Adapter {
             }
             if (ventil.dauerstate) {
                 let multi = 1;
-                if (ventil.dauer_sec) {
+                if (ventil.dauerstate_mult) {
                     multi = 60;
                 }
                 this.setForeignState(ventil.dauerstate, ventil.dauer * multi, false);
@@ -653,6 +691,13 @@ class Gartenbewaesserung extends utils.Adapter {
                         this.startVentil("ventil5");
                     } else {
                         this.stopVentile("ventil5");
+                    }
+                }
+                if (id.indexOf(".ventil6_aktiv") !== -1) {
+                    if (state.val) {
+                        this.startVentil("ventil6");
+                    } else {
+                        this.stopVentile("ventil6");
                     }
                 }
             }

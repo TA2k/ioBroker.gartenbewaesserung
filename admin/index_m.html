@@ -101,16 +101,20 @@
                     <label for="ventil1_dauerstate" class="translate">ioBroker State für Schaltdauer (HM = ON_TIME State) als Sicherheit falls sich ioBroker aufhängt</label>
                 </div>
                 <div class="col s6 input-field">
-                    <input type="checkbox" class="value" id="ventil1_dauer_sec" />
-                    <label for="ventil1_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den Schaltdauer State senden</label>
+                    <input type="text" class="value" id="ventil1_dauerstate_mult" />
+                    <label for="ventil1_dauerstate_mult" class="translate">Multiplikator für Schaltdauer (z.B. 60 Für Minuten auf Sekunden))</label>
                 </div>
-                <div class="col s8 input-field">
+                <div class="col s6 input-field">
                     <input type="text" class="value" id="ventil1_feuchtigkeit" />
                     <label for="ventil1_feuchtigkeit" class="translate">ioBroker State für Feuchtigkeitsmessung</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="ventil1_feuchtigkeit_tresh" />
                     <label for="ventil1_feuchtigkeit_tresh" class="translate">Feuchtigkeitswert bei dem die Bewässerung nicht gestartet wird (1 = true)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil1_feuchtigkeit_falsefeucht" />
+                    <label for="ventil1_feuchtigkeit_falsefeucht" class="translate">False/0 = Feucht</label>
                 </div>
             </div>
             <div class="row" style="font-size: 1.5rem;">
@@ -145,16 +149,20 @@
                     <label for="ventil2_dauerstate" class="translate">ioBroker State für Schaltdauer (HM = ON_TIME State) als Sicherheit falls sich ioBroker aufhängt</label>
                 </div>
                 <div class="col s6 input-field">
-                    <input type="checkbox" class="value" id="ventil2_dauer_sec" />
-                    <label for="ventil2_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den Schaltdauer State senden</label>
+                    <input type="text" class="value" id="ventil2_dauerstate_mult" />
+                    <label for="ventil2_dauerstate_mult" class="translate">Multiplikator für Schaltdauer (z.B. 60 Für Minuten auf Sekunden))</label>
                 </div>
-                <div class="col s8 input-field">
+                <div class="col s6 input-field">
                     <input type="text" class="value" id="ventil2_feuchtigkeit" />
                     <label for="ventil2_feuchtigkeit" class="translate">ioBroker State für Feuchtigkeitsmessung</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="ventil2_feuchtigkeit_tresh" />
                     <label for="ventil2_feuchtigkeit_tresh" class="translate">Feuchtigkeitswert bei dem die Bewässerung nicht gestartet wird (1 = true)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil2_feuchtigkeit_falsefeucht" />
+                    <label for="ventil2_feuchtigkeit_falsefeucht" class="translate">False/0 = Feucht</label>
                 </div>
             </div>
             <div class="row" style="font-size: 1.5rem;">
@@ -189,16 +197,20 @@
                     <label for="ventil3_dauerstate" class="translate">ioBroker State für Schaltdauer (HM = ON_TIME State) als Sicherheit falls sich ioBroker aufhängt</label>
                 </div>
                 <div class="col s6 input-field">
-                    <input type="checkbox" class="value" id="ventil3_dauer_sec" />
-                    <label for="ventil3_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den Schaltdauer State senden</label>
+                    <input type="text" class="value" id="ventil3_dauerstate_mult" />
+                    <label for="ventil3_dauerstate_mult" class="translate">Multiplikator für Schaltdauer (z.B. 60 Für Minuten auf Sekunden))</label>
                 </div>
-                <div class="col s8 input-field">
+                <div class="col s6 input-field">
                     <input type="text" class="value" id="ventil3_feuchtigkeit" />
                     <label for="ventil3_feuchtigkeit" class="translate">ioBroker State für Feuchtigkeitsmessung</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="ventil3_feuchtigkeit_tresh" />
                     <label for="ventil3_feuchtigkeit_tresh" class="translate">Feuchtigkeitswert bei dem die Bewässerung nicht gestartet wird (1 = true)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil3_feuchtigkeit_falsefeucht" />
+                    <label for="ventil3_feuchtigkeit_falsefeucht" class="translate">False/0 = Feucht</label>
                 </div>
             </div>
             <div class="row" style="font-size: 1.5rem;">
@@ -233,16 +245,20 @@
                     <label for="ventil4_dauerstate" class="translate">ioBroker State für Schaltdauer (HM = ON_TIME State) als Sicherheit falls sich ioBroker aufhängt</label>
                 </div>
                 <div class="col s6 input-field">
-                    <input type="checkbox" class="value" id="ventil4_dauer_sec" />
-                    <label for="ventil4_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den Schaltdauer State senden</label>
+                    <input type="text" class="value" id="ventil4_dauerstate_mult" />
+                    <label for="ventil4_dauerstate_mult" class="translate">Multiplikator für Schaltdauer (z.B. 60 Für Minuten auf Sekunden))</label>
                 </div>
-                <div class="col s8 input-field">
+                <div class="col s6 input-field">
                     <input type="text" class="value" id="ventil4_feuchtigkeit" />
                     <label for="ventil4_feuchtigkeit" class="translate">ioBroker State für Feuchtigkeitsmessung</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="ventil4_feuchtigkeit_tresh" />
                     <label for="ventil4_feuchtigkeit_tresh" class="translate">Feuchtigkeitswert bei dem die Bewässerung nicht gestartet wird (1 = true)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil4_feuchtigkeit_falsefeucht" />
+                    <label for="ventil4_feuchtigkeit_falsefeucht" class="translate">False/0 = Feucht</label>
                 </div>
             </div>
             <div class="row" style="font-size: 1.5rem;">
@@ -277,16 +293,68 @@
                     <label for="ventil5_dauerstate" class="translate">ioBroker State für Schaltdauer (HM = ON_TIME State) als Sicherheit falls sich ioBroker aufhängt</label>
                 </div>
                 <div class="col s6 input-field">
-                    <input type="checkbox" class="value" id="ventil5_dauer_sec" />
-                    <label for="ventil5_dauer_sec" class="translate">Bewässerungsdauer in Sekunden statt Minuten an den Schaltdauer State senden</label>
+                    <input type="text" class="value" id="ventil5_dauerstate_mult" />
+                    <label for="ventil5_dauerstate_mult" class="translate">Multiplikator für Schaltdauer (z.B. 60 Für Minuten auf Sekunden))</label>
                 </div>
-                <div class="col s8 input-field">
+                <div class="col s6 input-field">
                     <input type="text" class="value" id="ventil5_feuchtigkeit" />
                     <label for="ventil5_feuchtigkeit" class="translate">ioBroker State für Feuchtigkeitsmessung</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="ventil5_feuchtigkeit_tresh" />
                     <label for="ventil5_feuchtigkeit_tresh" class="translate">Feuchtigkeitswert bei dem die Bewässerung nicht gestartet wird (1 = true)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil5_feuchtigkeit_falsefeucht" />
+                    <label for="ventil5_feuchtigkeit_falsefeucht" class="translate">False/0 = Feucht</label>
+                </div>
+            </div>
+            <div class="row" style="font-size: 1.5rem;">
+                Ventil 6
+                <div class="col s12 input-field">
+                    <input type="checkbox" class="value" id="ventil6_enable" />
+                    <label for="ventil6_enable" class="translate">Ventil aktiv</label>
+                </div>
+                <div class="col s8 input-field">
+                    <input type="text" class="value" id="ventil6_name" />
+                    <label for="ventil6_name" class="translate">Name z.B. Rasen</label>
+                </div>
+                <div class="col s6 input-field">
+                    <input type="text" class="value" id="ventil6_state" />
+                    <label for="ventil6_state" class="translate">ioBroker State zum schalten z.B. hm-rpc.0.QEQ0661312.1.STATE</label>
+                </div>
+
+                <div class="col s2 input-field">
+                    <input type="text" class="value" id="ventil6_dauer" />
+                    <label for="ventil6_dauer" class="translate">Bewässerungsdauer Minuten</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil6_dauer_in_state" />
+                    <label for="ventil6_dauer_in_state" class="translate">Dauer in den State schreiben (z.B. Gardena)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="text" class="value" id="ventil6_dauer_in_state_mult" />
+                    <label for="ventil6_dauer_in_state_mult" class="translate">Multiplikator für Dauer in State (z.B. 60)</label>
+                </div>
+                <div class="col s6 input-field">
+                    <input type="text" class="value" id="ventil6_dauerstate" />
+                    <label for="ventil6_dauerstate" class="translate">ioBroker State für Schaltdauer als Sicherheit falls sich ioBroker aufhängt</label>
+                </div>
+                <div class="col s6 input-field">
+                    <input type="text" class="value" id="ventil6_dauerstate_mult" />
+                    <label for="ventil6_dauerstate_mult" class="translate">Multiplikator für Schaltdauer (z.B. 60 Für Minuten auf Sekunden))</label>
+                </div>
+                <div class="col s6 input-field">
+                    <input type="text" class="value" id="ventil6_feuchtigkeit" />
+                    <label for="ventil6_feuchtigkeit" class="translate">ioBroker State für Feuchtigkeitsmessung</label>
+                </div>
+                <div class="col s4 input-field">
+                    <input type="text" class="value" id="ventil6_feuchtigkeit_tresh" />
+                    <label for="ventil6_feuchtigkeit_tresh" class="translate">Feuchtigkeitswert bei dem die Bewässerung nicht gestartet wird (1 = true)</label>
+                </div>
+                <div class="col s2 input-field">
+                    <input type="checkbox" class="value" id="ventil6_feuchtigkeit_falsefeucht" />
+                    <label for="ventil6_feuchtigkeit_falsefeucht" class="translate">False/0 = Feucht</label>
                 </div>
             </div>
             <div class="row" style="font-size: 1.5rem;">
@@ -367,7 +435,7 @@
 
                 <div class="col s6 input-field">
                     <input type="text" class="value" id="tempforecast" />
-                    <label for="tempforecast" class="translate">Max Temperatur für den heutigen Tag</label>
+                    <label for="tempforecast" class="translate">State für Max Temperatur für den heutigen Tag</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="temptresh" />
@@ -375,7 +443,7 @@
                 </div>
                 <div class="col s6 input-field">
                     <input type="text" class="value" id="rainforecast" />
-                    <label for="rainforecast" class="translate">Niederschlag für den heutigen Tag</label>
+                    <label for="rainforecast" class="translate">State für Niederschlag für den heutigen Tag</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="raintresh" />
@@ -383,7 +451,7 @@
                 </div>
                 <div class="col s6 input-field">
                     <input type="text" class="value" id="rainforecastnext" />
-                    <label for="rainforecast" class="translate">Niederschlag für den nächsten Tag</label>
+                    <label for="rainforecast" class="translate">State für Niederschlag für den nächsten Tag</label>
                 </div>
                 <div class="col s4 input-field">
                     <input type="text" class="value" id="raintreshnext" />
