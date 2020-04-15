@@ -45,7 +45,6 @@ class Gartenbewaesserung extends utils.Adapter {
         this.getWeatherAndSunInterval = null;
         this.currentLong = "13.404954";
         this.curentLang = "52.520008";
-        this.ventile = [];
 
         if (this.config.zeitplan_enabled) {
             this.zeitplanArray = [];
@@ -71,98 +70,8 @@ class Gartenbewaesserung extends utils.Adapter {
                 this.zeitplanArray.push(6);
             }
         }
-        this.ventile.push({
-            id: "ventil1",
-            name: this.config.ventil1_name,
-            enable: this.config.ventil1_enable,
-            dauer: this.config.ventil1_dauer,
-            dauerstate_mult: this.config.ventil1_dauerstate_mult,
-            state: this.config.ventil1_state,
-            dauerstate: this.config.ventil1_dauerstate,
 
-            dauer_in_state_mult: this.config.ventil1_dauer_in_state_mult,
-            dauer_in_state: this.config.ventil1_dauer_in_state,
-            feuchtigkeit: this.config.ventil1_feuchtigkeit,
-            feuchtigkeit_tresh: this.config.ventil1_feuchtigkeit_tresh,
-            feuchtigkeit_falsefeucht: this.config.ventil1_feuchtigkeit_falsefeucht,
-        });
-
-        this.ventile.push({
-            id: "ventil2",
-            name: this.config.ventil2_name,
-            enable: this.config.ventil2_enable,
-            dauer: this.config.ventil2_dauer,
-            dauerstate_mult: this.config.ventil2_dauerstate_mult,
-            state: this.config.ventil2_state,
-            dauerstate: this.config.ventil2_dauerstate,
-
-            dauer_in_state_mult: this.config.ventil2_dauer_in_state_mult,
-            dauer_in_state: this.config.ventil2_dauer_in_state,
-            feuchtigkeit: this.config.ventil2_feuchtigkeit,
-            feuchtigkeit_tresh: this.config.ventil2_feuchtigkeit_tresh,
-            feuchtigkeit_falsefeucht: this.config.ventil2_feuchtigkeit_falsefeucht,
-        });
-
-        this.ventile.push({
-            id: "ventil3",
-            name: this.config.ventil3_name,
-            enable: this.config.ventil3_enable,
-            dauer: this.config.ventil3_dauer,
-            dauerstate_mult: this.config.ventil3_dauerstate_mult,
-            state: this.config.ventil3_state,
-            dauerstate: this.config.ventil3_dauerstate,
-
-            dauer_in_state_mult: this.config.ventil3_dauer_in_state_mult,
-            dauer_in_state: this.config.ventil3_dauer_in_state,
-            feuchtigkeit: this.config.ventil3_feuchtigkeit,
-            feuchtigkeit_tresh: this.config.ventil3_feuchtigkeit_tresh,
-            feuchtigkeit_falsefeucht: this.config.ventil3_feuchtigkeit_falsefeucht,
-        });
-
-        this.ventile.push({
-            id: "ventil4",
-            name: this.config.ventil4_name,
-            enable: this.config.ventil4_enable,
-            dauer: this.config.ventil4_dauer,
-            dauerstate_mult: this.config.ventil4_dauerstate_mult,
-            state: this.config.ventil4_state,
-            dauerstate: this.config.ventil4_dauerstate,
-            dauer_in_state_mult: this.config.ventil4_dauer_in_state_mult,
-            dauer_in_state: this.config.ventil4_dauer_in_state,
-            feuchtigkeit: this.config.ventil4_feuchtigkeit,
-            feuchtigkeit_tresh: this.config.ventil4_feuchtigkeit_tresh,
-            feuchtigkeit_falsefeucht: this.config.ventil4_feuchtigkeit_falsefeucht,
-        });
-
-        this.ventile.push({
-            id: "ventil5",
-            name: this.config.ventil5_name,
-            enable: this.config.ventil5_enable,
-            dauer: this.config.ventil5_dauer,
-            dauerstate_mult: this.config.ventil5_dauerstate_mult,
-            state: this.config.ventil5_state,
-            dauerstate: this.config.ventil5_dauerstate,
-            dauer_in_state_mult: this.config.ventil5_dauer_in_state_mult,
-            dauer_in_state: this.config.ventil5_dauer_in_state,
-            feuchtigkeit: this.config.ventil5_feuchtigkeit,
-            feuchtigkeit_tresh: this.config.ventil5_feuchtigkeit_tresh,
-            feuchtigkeit_falsefeucht: this.config.ventil5_feuchtigkeit_falsefeucht,
-        });
-
-        this.ventile.push({
-            id: "ventil6",
-            name: this.config.ventil6_name,
-            enable: this.config.ventil6_enable,
-            dauer: this.config.ventil6_dauer,
-            dauerstate_mult: this.config.ventil6_dauerstate_mult,
-            state: this.config.ventil6_state,
-            dauerstate: this.config.ventil6_dauerstate,
-            dauer_in_state_mult: this.config.ventil6_dauer_in_state_mult,
-            dauer_in_state: this.config.ventil6_dauer_in_state,
-            feuchtigkeit: this.config.ventil6_feuchtigkeit,
-            feuchtigkeit_tresh: this.config.ventil6_feuchtigkeit_tresh,
-            feuchtigkeit_falsefeucht: this.config.ventil6_feuchtigkeit_falsefeucht,
-        });
+        this.readVentilConfig();
 
         this.ventile.forEach(async (item, index) => {
             index++;
@@ -326,6 +235,94 @@ class Gartenbewaesserung extends utils.Adapter {
 
         this.setState("info.connection", true, true);
     }
+    readVentilConfig() {
+        this.ventile = [];
+        this.ventile.push({
+            id: "ventil1",
+            name: this.config.ventil1_name,
+            enable: this.config.ventil1_enable,
+            dauer: this.config.ventil1_dauer,
+            dauerstate_mult: this.config.ventil1_dauerstate_mult,
+            state: this.config.ventil1_state,
+            dauerstate: this.config.ventil1_dauerstate,
+            dauer_in_state_mult: this.config.ventil1_dauer_in_state_mult,
+            dauer_in_state: this.config.ventil1_dauer_in_state,
+            feuchtigkeit: this.config.ventil1_feuchtigkeit,
+            feuchtigkeit_tresh: this.config.ventil1_feuchtigkeit_tresh,
+            feuchtigkeit_falsefeucht: this.config.ventil1_feuchtigkeit_falsefeucht,
+        });
+        this.ventile.push({
+            id: "ventil2",
+            name: this.config.ventil2_name,
+            enable: this.config.ventil2_enable,
+            dauer: this.config.ventil2_dauer,
+            dauerstate_mult: this.config.ventil2_dauerstate_mult,
+            state: this.config.ventil2_state,
+            dauerstate: this.config.ventil2_dauerstate,
+            dauer_in_state_mult: this.config.ventil2_dauer_in_state_mult,
+            dauer_in_state: this.config.ventil2_dauer_in_state,
+            feuchtigkeit: this.config.ventil2_feuchtigkeit,
+            feuchtigkeit_tresh: this.config.ventil2_feuchtigkeit_tresh,
+            feuchtigkeit_falsefeucht: this.config.ventil2_feuchtigkeit_falsefeucht,
+        });
+        this.ventile.push({
+            id: "ventil3",
+            name: this.config.ventil3_name,
+            enable: this.config.ventil3_enable,
+            dauer: this.config.ventil3_dauer,
+            dauerstate_mult: this.config.ventil3_dauerstate_mult,
+            state: this.config.ventil3_state,
+            dauerstate: this.config.ventil3_dauerstate,
+            dauer_in_state_mult: this.config.ventil3_dauer_in_state_mult,
+            dauer_in_state: this.config.ventil3_dauer_in_state,
+            feuchtigkeit: this.config.ventil3_feuchtigkeit,
+            feuchtigkeit_tresh: this.config.ventil3_feuchtigkeit_tresh,
+            feuchtigkeit_falsefeucht: this.config.ventil3_feuchtigkeit_falsefeucht,
+        });
+        this.ventile.push({
+            id: "ventil4",
+            name: this.config.ventil4_name,
+            enable: this.config.ventil4_enable,
+            dauer: this.config.ventil4_dauer,
+            dauerstate_mult: this.config.ventil4_dauerstate_mult,
+            state: this.config.ventil4_state,
+            dauerstate: this.config.ventil4_dauerstate,
+            dauer_in_state_mult: this.config.ventil4_dauer_in_state_mult,
+            dauer_in_state: this.config.ventil4_dauer_in_state,
+            feuchtigkeit: this.config.ventil4_feuchtigkeit,
+            feuchtigkeit_tresh: this.config.ventil4_feuchtigkeit_tresh,
+            feuchtigkeit_falsefeucht: this.config.ventil4_feuchtigkeit_falsefeucht,
+        });
+        this.ventile.push({
+            id: "ventil5",
+            name: this.config.ventil5_name,
+            enable: this.config.ventil5_enable,
+            dauer: this.config.ventil5_dauer,
+            dauerstate_mult: this.config.ventil5_dauerstate_mult,
+            state: this.config.ventil5_state,
+            dauerstate: this.config.ventil5_dauerstate,
+            dauer_in_state_mult: this.config.ventil5_dauer_in_state_mult,
+            dauer_in_state: this.config.ventil5_dauer_in_state,
+            feuchtigkeit: this.config.ventil5_feuchtigkeit,
+            feuchtigkeit_tresh: this.config.ventil5_feuchtigkeit_tresh,
+            feuchtigkeit_falsefeucht: this.config.ventil5_feuchtigkeit_falsefeucht,
+        });
+        this.ventile.push({
+            id: "ventil6",
+            name: this.config.ventil6_name,
+            enable: this.config.ventil6_enable,
+            dauer: this.config.ventil6_dauer,
+            dauerstate_mult: this.config.ventil6_dauerstate_mult,
+            state: this.config.ventil6_state,
+            dauerstate: this.config.ventil6_dauerstate,
+            dauer_in_state_mult: this.config.ventil6_dauer_in_state_mult,
+            dauer_in_state: this.config.ventil6_dauer_in_state,
+            feuchtigkeit: this.config.ventil6_feuchtigkeit,
+            feuchtigkeit_tresh: this.config.ventil6_feuchtigkeit_tresh,
+            feuchtigkeit_falsefeucht: this.config.ventil6_feuchtigkeit_falsefeucht,
+        });
+    }
+
     async checkForBewaesserungStart() {
         if (!this.bewaesserung_automatik) {
             if (!this.config.temptresh || this.tempAndRain.temp === undefined || this.tempAndRain.temp >= this.config.temptresh) {
@@ -726,6 +723,7 @@ class Gartenbewaesserung extends utils.Adapter {
                     this.config[ventil + "_" + configId] = state.val;
                     await this.setForeignObjectAsync(adapterConfig, config);
                     this.log.info("Set: " + ventil + "_" + configId + ": " + state.val);
+                    this.readVentilConfig();
                 } else {
                     config.native[configId] = state.val;
                     this.config[configId] = state.val;
