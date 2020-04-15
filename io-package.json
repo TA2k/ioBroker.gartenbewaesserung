@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "gartenbewaesserung",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "news": {
-      "0.0.3": {
+      "0.0.4": {
         "en": "initial release",
         "de": "Erstveröffentlichung",
         "ru": "Начальная версия",
@@ -152,7 +152,9 @@
     "zeitplan_freitag": false,
     "zeitplan_samstag": false,
     "zeitplan_sonntag": false,
-    "pumpen_state": ""
+    "pumpen_state": "",
+    "pauseTime": 5,
+    "updateinterval": 10
   },
   "objects": [],
   "instanceObjects": [
