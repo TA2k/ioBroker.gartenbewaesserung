@@ -9,6 +9,7 @@
   "bundleDependencies": false,
   "dependencies": {
     "@iobroker/adapter-core": "^2.2.1",
+    "@sentry/node": "^5.15.4",
     "moment": "^2.24.0",
     "suncalc": "^1.8.0"
   },
@@ -55,5 +56,5 @@
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit"
   },
-  "version": "0.0.4"
+  "version": "0.0.5"
 }

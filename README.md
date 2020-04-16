@@ -19,7 +19,7 @@ ioBroker Adapter für Gartenbewässerung
 
 ## Changelog
 
-### 0.0.1
+### 0.0.5
 
 * (tombox) initial release
 
