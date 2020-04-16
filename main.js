@@ -483,56 +483,65 @@ class Gartenbewaesserung extends utils.Adapter {
     }
     async getWeatherAndSunData() {
         return new Promise(async (resolve, reject) => {
-            if (this.config.tempforecast) {
-                await this.getForeignStateAsync(this.config.tempforecast)
-                    .then((obj) => {
-                        if (obj) {
-                            this.setState("status.tempforecast", obj.val, true);
-                            this.tempAndRain.temp = obj.val;
-                        }
-                    })
-                    .catch((error) => this.log.error("Cannot receive temp forecast from:" + this.config.tempforecast + " " + JSON.stringify(error)));
-            }
-            if (this.config.rainforecast) {
-                await this.getForeignStateAsync(this.config.rainforecast)
-                    .then((obj) => {
-                        if (obj) {
-                            this.setState("status.rainforecast", obj.val, true);
-                            this.tempAndRain.rain = obj.val;
-                        }
-                    })
-                    .catch((error) => this.log.error("Cannot receive rain forecast from:" + this.config.rainforecast + " " + JSON.stringify(error)));
-            }
-            if (this.config.rainforecastnext) {
-                await this.getForeignStateAsync(this.config.rainforecastnext)
-                    .then((obj) => {
-                        if (obj) {
-                            this.setState("status.rainforecastnext", obj.val, true);
-                            this.tempAndRain.rainnext = obj.val;
-                        }
-                    })
-                    .catch((error) => this.log.error("Cannot receive rain forecast from:" + this.config.rainforecastnext + " " + JSON.stringify(error)));
-            }
+            try {
+                if (this.config.tempforecast) {
+                    await this.getForeignStateAsync(this.config.tempforecast)
+                        .then((obj) => {
+                            if (obj) {
+                                this.setState("status.tempforecast", obj.val, true);
+                                this.tempAndRain.temp = obj.val;
+                            }
+                        })
+                        .catch((error) => this.log.error("Cannot receive temp forecast from:" + this.config.tempforecast + " " + JSON.stringify(error)));
+                }
+                if (this.config.rainforecast) {
+                    await this.getForeignStateAsync(this.config.rainforecast)
+                        .then((obj) => {
+                            if (obj) {
+                                this.setState("status.rainforecast", obj.val, true);
+                                this.tempAndRain.rain = obj.val;
+                            }
+                        })
+                        .catch((error) => this.log.error("Cannot receive rain forecast from:" + this.config.rainforecast + " " + JSON.stringify(error)));
+                }
+                if (this.config.rainforecastnext) {
+                    await this.getForeignStateAsync(this.config.rainforecastnext)
+                        .then((obj) => {
+                            if (obj) {
+                                this.setState("status.rainforecastnext", obj.val, true);
+                                this.tempAndRain.rainnext = obj.val;
+                            }
+                        })
+                        .catch((error) => this.log.error("Cannot receive rain forecast from:" + this.config.rainforecastnext + " " + JSON.stringify(error)));
+                }
 
-            this.ventile &&
-                this.ventile.forEach(async (item) => {
-                    if (item.feuchtikeit) {
-                        await this.getForeignStateAsync(item.feuchtigkeit)
-                            .then((obj) => {
-                                if (obj) {
-                                    this.setState("status." + item.id + ".feuchtigkeit", obj.val, true);
-                                    this.tempAndRain[item.id + "feuchtigkeit"] = obj.val;
-                                }
-                            })
-                            .catch((error) => this.log.error("Cannot receive feuchtigkeit from:" + item.feuchtigkeit + " " + JSON.stringify(error)));
-                    }
-                });
-            this.times = SunCalc.getTimes(new Date(), this.currentLat, this.currentLong);
-            this.setState("status.sonnenaufgang", this.times.sunrise.toTimeString());
-            this.setState("status.sonnenuntergang", this.times.sunset.toTimeString());
-            this.setState("status.startMorgen", moment(this.times.sunrise.toISOString()).add(this.config.minSonnenaufgang, "minutes").toLocaleString());
-            this.setState("status.startAbend", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").toLocaleString());
-            resolve();
+                this.ventile &&
+                    this.ventile.forEach(async (item) => {
+                        if (item.feuchtikeit) {
+                            await this.getForeignStateAsync(item.feuchtigkeit)
+                                .then((obj) => {
+                                    if (obj) {
+                                        this.setState("status." + item.id + ".feuchtigkeit", obj.val, true);
+                                        this.tempAndRain[item.id + "feuchtigkeit"] = obj.val;
+                                    }
+                                })
+                                .catch((error) => this.log.error("Cannot receive feuchtigkeit from:" + item.feuchtigkeit + " " + JSON.stringify(error)));
+                        }
+                    });
+                this.times = SunCalc.getTimes(new Date(), this.currentLat, this.currentLong);
+                this.setState("status.sonnenaufgang", this.times.sunrise.toTimeString());
+                this.setState("status.sonnenuntergang", this.times.sunset.toTimeString());
+                if (this.times && this.times.sunrise) {
+                    this.setState("status.startMorgen", moment(this.times.sunrise.toISOString()).add(this.config.minSonnenaufgang, "minutes").toLocaleString());
+                }
+                if (this.times && this.times.sunset) {
+                    this.setState("status.startAbend", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").toLocaleString());
+                }
+                resolve();
+            } catch (error) {
+                this.log.error(error);
+                resolve();
+            }
         });
     }
 
