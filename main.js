@@ -602,8 +602,13 @@ class Gartenbewaesserung extends utils.Adapter {
                     multi = 60;
                 }
                 this.log.info("Set: " + ventil.dauerstate + " to: " + ventil.dauer * multi);
-                this.setForeignState(ventil.dauerstate, ventil.dauer * multi, false);
-                await this.sleep(2000);
+                await this.setForeignStateAsync(ventil.dauerstate, ventil.dauer * multi, false);
+                await this.sleep(1000);
+            }
+            if (this.config.pumpen_state) {
+                this.log.info("Start Pumpe");
+                await this.setForeignStateAsync(this.config.pumpen_state, true, false);
+                await this.setStateAsync("status.pumpe", true, true);
             }
             this.log.info("Start Ventil: " + ventil.id);
             if (ventil.dauer_in_state) {
@@ -612,12 +617,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 this.setForeignState(ventil.state, true, false);
             }
 
-            if (this.config.pumpen_state) {
-                this.setForeignState(this.config.pumpen_state, true, false);
-                this.setState("status.pumpe", true, true);
-            }
             const end = moment().add(ventil.dauer * 60 * 1000, "millisecond");
-            this.log.info("Start " + ventil.id);
             this.setState("status." + ventil.id + ".active", true, false);
             this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
             ventil.active = true;
