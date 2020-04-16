@@ -383,7 +383,8 @@ class Gartenbewaesserung extends utils.Adapter {
         this.setState("status.bewaesserung_automatik", true, true);
         this.currentTimeoutTime = 0;
         if (this.config.pumpen_state) {
-            this.setForeignState(this.config.pumpen_state, true, false);
+            this.log.info("Start pumpe");
+            await this.setForeignStateAsync(this.config.pumpen_state, true, false);
             this.setState("status.pumpe", true, true);
         }
         const ventileEnabled = this.ventile.filter(function (e) {
@@ -409,21 +410,24 @@ class Gartenbewaesserung extends utils.Adapter {
             this.stopTime = this.currentTimeoutTime + dauer * 1000;
             if (dauer > 0) {
                 this.log.info("Start " + ventil.id + " in " + this.currentTimeoutTime / 1000 + "sek");
-                const timeoutIdStart = setTimeout(() => {
+                const timeoutIdStart = setTimeout(async () => {
                     const end = moment().add(ventilStopTime, "millisecond");
+                    if (ventil.dauerstate) {
+                        let multi = 1;
+                        if (ventil.dauerstate_mult) {
+                            multi = 60;
+                        }
+                        this.log.info("Set: " + ventil.dauerstate + " to: " + ventil.dauer * multi);
+                        await this.setForeignStateAsync(ventil.dauerstate, ventil.dauer * multi, false);
+                        await this.sleep(1000);
+                    }
                     this.log.info("Start " + ventil.id);
                     if (ventil.dauer_in_state) {
                         this.setForeignState(ventil.state, ventil.dauer * ventil.dauer_in_state_mult, false);
                     } else {
                         this.setForeignState(ventil.state, true, false);
                     }
-                    if (ventil.dauerstate) {
-                        let multi = 1;
-                        if (ventil.dauerstate_mult) {
-                            multi = ventil.dauerstate_mult;
-                        }
-                        this.setForeignState(ventil.dauerstate, ventil.dauer * multi, false);
-                    }
+
                     this.setState("status." + ventil.id + ".active", true, false);
                     this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
                     ventil.active = true;
