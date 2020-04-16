@@ -603,7 +603,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 }
                 this.log.info("Set: " + ventil.dauerstate + " to: " + ventil.dauer * multi);
                 this.setForeignState(ventil.dauerstate, ventil.dauer * multi, false);
-                await this.sleep(1000);
+                await this.sleep(2000);
             }
             this.log.info("Start Ventil: " + ventil.id);
             if (ventil.dauer_in_state) {
