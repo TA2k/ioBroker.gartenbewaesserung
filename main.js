@@ -9,6 +9,8 @@
 const utils = require("@iobroker/adapter-core");
 const SunCalc = require("suncalc");
 const moment = require("moment");
+const momentDurationFormatSetup = require("moment-duration-format");
+momentDurationFormatSetup(moment);
 const Sentry = require("@sentry/node");
 Sentry.init({ dsn: "https://730f0e6bc501405399b19a879fde7bbd@o378982.ingest.sentry.io/5203164" });
 
@@ -118,7 +120,7 @@ class Gartenbewaesserung extends utils.Adapter {
             const status = [
                 { name: "active", type: "string", unit: "" },
                 { name: "ende", type: "string", unit: "Uhr" },
-                { name: "restzeit", type: "number", unit: "min" },
+                { name: "restzeit", type: "string", unit: "min" },
                 { name: "restzeit_sek", type: "number", unit: "sek" },
                 { name: "fortschritt", type: "number", unit: "%" },
                 { name: "feuchtigkeit", type: "number", unit: "" },
@@ -323,56 +325,69 @@ class Gartenbewaesserung extends utils.Adapter {
             feuchtigkeit_falsefeucht: this.config.ventil6_feuchtigkeit_falsefeucht,
         });
     }
-
-    async checkForBewaesserungStart() {
-        if (!this.bewaesserung_automatik) {
-            if (!this.config.temptresh || this.tempAndRain.temp === undefined || this.tempAndRain.temp >= this.config.temptresh) {
-                if (!this.config.raintresh || this.tempAndRain.rain === undefined || this.tempAndRain.rain <= this.config.raintresh) {
-                    if (!this.config.raintreshnext || this.tempAndRain.rainnext === undefined || this.tempAndRain.rainnext <= this.config.raintreshnext) {
-                        if (!this.config.zeitplan_enabled || this.zeitplanArray.indexOf(moment().day()) !== -1) {
-                            if (this.config.sonnenstand) {
-                                const sunrise = moment(this.times.sunrise).add(this.config.minSonnenaufgang, "minute");
-                                const sunset = moment(this.times.sunset).add(this.config.minSonnenuntergang, "minute");
-                                if (moment().isSame(sunrise, "minute") || moment().isSame(sunset, "minute")) {
-                                    this.startBewaesserung();
-                                }
-                            }
-
-                            if (
-                                (this.config.startzeit1_enable && moment().isSame(moment(this.config.startzeit1, "hh:mm"), "minute")) ||
-                                (this.config.startzeit2_enable && moment().isSame(moment(this.config.startzeit2, "hh:mm"), "minute")) ||
-                                (this.config.startzeit3_enable && moment().isSame(moment(this.config.startzeit3, "hh:mm"), "minute"))
-                            ) {
-                                this.startBewaesserung();
-                            }
-                        } else {
-                            this.log.info("Bewässerung nicht gestartet weil der Zeitplan für den heutigen Wochentag deaktiviert ist.");
-                        }
+    checkTresholds() {
+        if (!this.config.temptresh || this.tempAndRain.temp === undefined || this.tempAndRain.temp >= this.config.temptresh) {
+            if (!this.config.raintresh || this.tempAndRain.rain === undefined || this.tempAndRain.rain <= this.config.raintresh) {
+                if (!this.config.raintreshnext || this.tempAndRain.rainnext === undefined || this.tempAndRain.rainnext <= this.config.raintreshnext) {
+                    if (!this.config.zeitplan_enabled || this.zeitplanArray.indexOf(moment().day()) !== -1) {
+                        return true;
                     } else {
-                        this.log.info("Bewässerung nicht gestartet wegen Regen Schwellwert für Morgen " + this.tempAndRain.rainnext);
+                        this.log.info("Bewässerung nicht gestartet weil der Zeitplan für den heutigen Wochentag deaktiviert ist.");
                     }
                 } else {
-                    this.log.info("Bewässerung nicht gestartet wegen Regen Schwellwert " + this.tempAndRain.rain);
+                    this.log.info("Bewässerung nicht gestartet wegen Regen Schwellwert für Morgen " + this.tempAndRain.rainnext);
                 }
             } else {
-                this.log.info("Bewässerung nicht gestartet wegen Temperatur Schwellwert " + this.tempAndRain.temp);
+                this.log.info("Bewässerung nicht gestartet wegen Regen Schwellwert " + this.tempAndRain.rain);
+            }
+        } else {
+            this.log.info("Bewässerung nicht gestartet wegen Temperatur Schwellwert " + this.tempAndRain.temp);
+        }
+        return false;
+    }
+    async checkForBewaesserungStart() {
+        if (!this.bewaesserung_automatik) {
+            if (this.config.sonnenstand) {
+                const sunrise = moment(this.times.sunrise).add(this.config.minSonnenaufgang, "minute");
+                const sunset = moment(this.times.sunset).add(this.config.minSonnenuntergang, "minute");
+                if (moment().isSame(sunrise, "minute") || moment().isSame(sunset, "minute")) {
+                    if (this.checkTresholds()) {
+                        this.startBewaesserung();
+                    }
+                }
+            }
+
+            if (
+                (this.config.startzeit1_enable && moment().isSame(moment(this.config.startzeit1, "hh:mm"), "minute")) ||
+                (this.config.startzeit2_enable && moment().isSame(moment(this.config.startzeit2, "hh:mm"), "minute")) ||
+                (this.config.startzeit3_enable && moment().isSame(moment(this.config.startzeit3, "hh:mm"), "minute"))
+            ) {
+                if (this.checkTresholds()) {
+                    this.startBewaesserung();
+                }
             }
         }
     }
     async updateVentileStatus() {
         this.ventile.forEach((ventil) => {
             if (ventil.active) {
-                this.setState("status." + ventil.id + ".restzeit", moment.utc(moment.duration(ventil.end.diff(moment())).asMilliseconds()).format("mm:ss"));
-                this.setState("status." + ventil.id + ".restzeit_sek", Math.abs(moment.duration(ventil.end.diff(moment())).asSeconds()).toFixed(0));
-                this.setState(
-                    "status." + ventil.id + ".fortschritt",
-                    Math.abs(100 - (100 * moment.duration(ventil.end.diff(moment())).asSeconds()) / (ventil.dauer * 60 + parseInt(this.config.pauseTime))).toFixed(0)
-                );
+                if (ventil.end) {
+                    this.setState("status." + ventil.id + ".restzeit", moment.duration(ventil.end.diff(moment())).format("mm:ss"));
+                    this.setState("status." + ventil.id + ".restzeit_sek", Math.abs(moment.duration(ventil.end.diff(moment())).asSeconds()).toFixed(0));
+                    this.setState(
+                        "status." + ventil.id + ".fortschritt",
+                        Math.abs(100 - (100 * moment.duration(ventil.end.diff(moment())).asSeconds()) / (ventil.dauer * 60 + parseInt(this.config.pauseTime))).toFixed(0)
+                    );
+                } else {
+                    this.setState("status." + ventil.id + ".restzeit", "0:00");
+                    this.setState("status." + ventil.id + ".restzeit_sek", 0);
+                    this.setState("status." + ventil.id + ".fortschritt", 100);
+                }
             }
         });
 
         if (this.bewaesserungEnd) {
-            this.setState("status.restzeit", moment.utc(moment.duration(this.bewaesserungEnd.diff(moment())).asMilliseconds()).format("mm:ss"));
+            this.setState("status.restzeit", moment.duration(this.bewaesserungEnd.diff(moment())).format("mm:ss"));
             this.setState("status.restzeit_sek", Math.abs(moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds()).toFixed(0));
             this.setState("status.fortschritt", Math.abs(100 - (100 * moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds()) / (this.stopTime / 1000)).toFixed(0));
         }
@@ -468,7 +483,7 @@ class Gartenbewaesserung extends utils.Adapter {
             if (ventil.dauerstate) {
                 let multi = 1;
                 if (ventil.dauerstate_mult) {
-                    multi = 60;
+                    multi = parseInt(ventil.dauerstate_mult);
                 }
                 this.log.info("Set: " + ventil.dauerstate + " to: " + ventil.dauer * multi);
                 await this.setForeignStateAsync(ventil.dauerstate, ventil.dauer * multi, false);
@@ -489,6 +504,7 @@ class Gartenbewaesserung extends utils.Adapter {
 
     stopBewaesserung() {
         return new Promise(async (resolve, reject) => {
+            this.log.info("Bewässerung stop");
             this.stopVentile();
             this.bewaesserungEnd = "";
             this.bewaesserungTimeouts.forEach((timeout) => {
@@ -496,7 +512,6 @@ class Gartenbewaesserung extends utils.Adapter {
             });
             this.bewaesserung_automatik = false;
             this.updateVentileStatus();
-            this.log.info("Bewässerung stop");
 
             await this.setStateAsync("status.bewaesserung_automatik", false, true);
             this.setStateAsync("control.bewaesserung_aktiv", false, true);

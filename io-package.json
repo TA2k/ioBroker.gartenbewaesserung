@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "gartenbewaesserung",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "news": {
-      "0.0.5": {
+      "0.0.6": {
         "en": "initial release",
         "de": "Erstveröffentlichung",
         "ru": "Начальная версия",
@@ -80,6 +80,7 @@
     "ventil1_feuchtigkeit": "",
     "ventil1_feuchtigkeit_tresh": 0,
     "ventil1_feuchtigkeit_falsefeucht": false,
+    "ventil1_dauerstate_mult": 60,
     "ventil2_enable": false,
     "ventil2_name": "",
     "ventil2_state": "",
@@ -90,6 +91,7 @@
     "ventil2_feuchtigkeit": "",
     "ventil2_feuchtigkeit_tresh": 0,
     "ventil2_feuchtigkeit_falsefeucht": false,
+    "ventil2_dauerstate_mult": 60,
     "ventil3_enable": false,
     "ventil3_name": "",
     "ventil3_state": "",
@@ -100,6 +102,7 @@
     "ventil3_feuchtigkeit": "",
     "ventil3_feuchtigkeit_tresh": 0,
     "ventil3_feuchtigkeit_falsefeucht": false,
+    "ventil3_dauerstate_mult": 60,
     "ventil4_enable": false,
     "ventil4_name": "",
     "ventil4_state": "",
@@ -110,6 +113,7 @@
     "ventil4_feuchtigkeit": "",
     "ventil4_feuchtigkeit_tresh": 0,
     "ventil4_feuchtigkeit_falsefeucht": false,
+    "ventil4_dauerstate_mult": 60,
     "ventil5_enable": false,
     "ventil5_name": "",
     "ventil5_state": "",
@@ -120,6 +124,7 @@
     "ventil5_feuchtigkeit": "",
     "ventil5_feuchtigkeit_tresh": 0,
     "ventil5_feuchtigkeit_falsefeucht": false,
+    "ventil5_dauerstate_mult": 60,
     "ventil6_enable": false,
     "ventil6_name": "",
     "ventil6_state": "",
@@ -130,6 +135,7 @@
     "ventil6_feuchtigkeit": "",
     "ventil6_feuchtigkeit_tresh": 0,
     "ventil6_feuchtigkeit_falsefeucht": false,
+    "ventil6_dauerstate_mult": 60,
     "sonnenstand": false,
     "minSonnenaufgang": 0,
     "minSonnenuntergang": 0,

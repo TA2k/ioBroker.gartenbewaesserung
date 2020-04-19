@@ -11,6 +11,7 @@
     "@iobroker/adapter-core": "^2.2.1",
     "@sentry/node": "^5.15.4",
     "moment": "^2.24.0",
+    "moment-duration-format": "^2.3.2",
     "suncalc": "^1.8.0"
   },
   "deprecated": false,
@@ -56,5 +57,5 @@
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit"
   },
-  "version": "0.0.5"
+  "version": "0.0.6"
 }
