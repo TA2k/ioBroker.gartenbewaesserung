@@ -372,7 +372,7 @@ class Gartenbewaesserung extends utils.Adapter {
         this.ventile.forEach((ventil) => {
             if (ventil.active) {
                 if (ventil.end) {
-                    this.setState("status." + ventil.id + ".restzeit", moment.duration(ventil.end.diff(moment())).format("mm:ss"));
+                    this.setState("status." + ventil.id + ".restzeit", moment.duration(ventil.end.diff(moment())).abs().format("mm:ss", { trim: false }));
                     this.setState("status." + ventil.id + ".restzeit_sek", Math.abs(moment.duration(ventil.end.diff(moment())).asSeconds()).toFixed(0));
                     this.setState(
                         "status." + ventil.id + ".fortschritt",
@@ -387,7 +387,7 @@ class Gartenbewaesserung extends utils.Adapter {
         });
 
         if (this.bewaesserungEnd) {
-            this.setState("status.restzeit", moment.duration(this.bewaesserungEnd.diff(moment())).format("mm:ss"));
+            this.setState("status.restzeit", moment.duration(this.bewaesserungEnd.diff(moment())).abs().format("mm:ss", { trim: false }));
             this.setState("status.restzeit_sek", Math.abs(moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds()).toFixed(0));
             this.setState("status.fortschritt", Math.abs(100 - (100 * moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds()) / (this.stopTime / 1000)).toFixed(0));
         }
