@@ -162,7 +162,7 @@ class Gartenbewaesserung extends utils.Adapter {
         const status = [
             { name: "bewaesserung_automatik", type: "boolean", unit: "" },
             { name: "pumpe", type: "boolean", unit: "" },
-            { name: "lautzeit_ende_uhrzeit", type: "string", unit: "Uhr" },
+            { name: "lautzeit_ende_uhrzeit", type: "object", unit: "" },
             { name: "restzeit", type: "number", unit: "min" },
             { name: "lautzeit_gesamt_in_sek", type: "number", unit: "sek" },
             { name: "restzeit_sek", type: "number", unit: "sek" },
@@ -458,6 +458,11 @@ class Gartenbewaesserung extends utils.Adapter {
     }
     async deactivateVentil(ventil) {
         return new Promise(async (resolve, reject) => {
+            if (!ventil.state) {
+                this.log.error("No state available for ventil: " + ventil.id);
+                resolve();
+                return;
+            }
             this.log.info("Stop " + ventil.id);
             this.updateVentileStatus();
             let stopValue = false;
@@ -480,6 +485,11 @@ class Gartenbewaesserung extends utils.Adapter {
 
     async activateVentil(ventil) {
         return new Promise(async (resolve, reject) => {
+            if (!ventil.state) {
+                this.log.error("No state available for ventil: " + ventil.id);
+                resolve();
+                return;
+            }
             if (ventil.dauerstate) {
                 let multi = 1;
                 if (ventil.dauerstate_mult) {
@@ -495,6 +505,7 @@ class Gartenbewaesserung extends utils.Adapter {
             } else {
                 this.setForeignState(ventil.state, true, false);
             }
+
             this.setState("status." + ventil.id + ".active", true, true);
             this.setState("control." + ventil.id + "_aktiv", true, true);
             ventil.active = true;
@@ -559,7 +570,7 @@ class Gartenbewaesserung extends utils.Adapter {
 
                 this.ventile &&
                     this.ventile.forEach(async (item) => {
-                        if (item.feuchtikeit) {
+                        if (item.feuchtigkeit) {
                             await this.getForeignStateAsync(item.feuchtigkeit)
                                 .then((obj) => {
                                     if (obj) {
