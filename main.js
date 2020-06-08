@@ -120,6 +120,7 @@ class Gartenbewaesserung extends utils.Adapter {
             const status = [
                 { name: "active", type: "string", unit: "" },
                 { name: "ende", type: "string", unit: "Uhr" },
+                { name: "endeTimestamp", type: "number", unit: "" },
                 { name: "restzeit", type: "string", unit: "min" },
                 { name: "restzeit_sek", type: "number", unit: "sek" },
                 { name: "fortschritt", type: "number", unit: "%" },
@@ -163,6 +164,7 @@ class Gartenbewaesserung extends utils.Adapter {
             { name: "bewaesserung_automatik", type: "boolean", unit: "" },
             { name: "pumpe", type: "boolean", unit: "" },
             { name: "lautzeit_ende_uhrzeit", type: "object", unit: "" },
+            { name: "lautzeit_ende_uhrzeitTimestamp", type: "number", unit: "" },
             { name: "restzeit", type: "number", unit: "min" },
             { name: "lautzeit_gesamt_in_sek", type: "number", unit: "sek" },
             { name: "restzeit_sek", type: "number", unit: "sek" },
@@ -174,6 +176,8 @@ class Gartenbewaesserung extends utils.Adapter {
             { name: "sonnenuntergang", type: "string", unit: "Uhr" },
             { name: "startMorgen", type: "string", unit: "Uhr" },
             { name: "startAbend", type: "string", unit: "Uhr" },
+            { name: "startMorgenTimestamp", type: "number", unit: "" },
+            { name: "startAbendTimestamp", type: "number", unit: "" },
         ];
         for (const property of status) {
             await this.setObjectNotExistsAsync("status." + property.name, {
@@ -431,6 +435,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 const timeoutIdStart = setTimeout(async () => {
                     const end = moment().add(ventil.dauer * 60, "second");
                     this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
+                    this.setState("status." + ventil.id + ".endeTimestamp", end.unix(), false);
                     ventil.end = end;
                     await this.activateVentil(ventil);
                     this.updateVentileStatus();
@@ -453,6 +458,7 @@ class Gartenbewaesserung extends utils.Adapter {
         this.bewaesserungEnd = moment().add(this.stopTime, "millisecond");
 
         this.setState("status.lautzeit_ende_uhrzeit", this.bewaesserungEnd.toLocaleString());
+        this.setState("status.lautzeit_ende_uhrzeitTimestamp", this.bewaesserungEnd.unix());
         this.setState("status.lautzeit_gesamt_in_sek", moment.duration(this.bewaesserungEnd.diff(moment())).asSeconds().toFixed(0));
         this.updateVentileStatus();
     }
@@ -591,9 +597,11 @@ class Gartenbewaesserung extends utils.Adapter {
                 }
                 if (this.times && this.times.sunrise) {
                     this.setState("status.startMorgen", moment(this.times.sunrise.toISOString()).add(this.config.minSonnenaufgang, "minutes").toLocaleString());
+                    this.setState("status.startMorgenTimestamp", moment(this.times.sunrise.toISOString()).add(this.config.minSonnenaufgang, "minutes").unix());
                 }
                 if (this.times && this.times.sunset) {
                     this.setState("status.startAbend", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").toLocaleString());
+                    this.setState("status.startAbendTimestamp", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").unix());
                 }
                 resolve();
             } catch (error) {
@@ -649,6 +657,7 @@ class Gartenbewaesserung extends utils.Adapter {
             }
             const end = moment().add(ventil.dauer * 60 * 1000, "millisecond");
             this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
+            this.setState("status." + ventil.id + ".endeTimestamp", end.unix(), false);
             ventil.end = end;
 
             this.activateVentil(ventil);
