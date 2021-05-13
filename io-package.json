@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "gartenbewaesserung",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "news": {
-      "0.0.7": {
+      "0.0.8": {
         "en": "initial release",
         "de": "Erstveröffentlichung",
         "ru": "Начальная версия",
