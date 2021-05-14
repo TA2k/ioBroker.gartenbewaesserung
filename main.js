@@ -118,7 +118,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 native: {},
             });
             const status = [
-                { name: "active", type: "string", unit: "" },
+                { name: "active", type: "boolean", unit: "" },
                 { name: "ende", type: "string", unit: "Uhr" },
                 { name: "endeTimestamp", type: "number", unit: "" },
                 { name: "restzeit", type: "string", unit: "min" },
