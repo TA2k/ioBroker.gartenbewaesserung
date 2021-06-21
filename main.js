@@ -165,7 +165,7 @@ class Gartenbewaesserung extends utils.Adapter {
             { name: "pumpe", type: "boolean", unit: "" },
             { name: "lautzeit_ende_uhrzeit", type: "string", unit: "" },
             { name: "lautzeit_ende_uhrzeitTimestamp", type: "number", unit: "" },
-            { name: "restzeit", type: "number", unit: "min" },
+            { name: "restzeit", type: "string", unit: "min" },
             { name: "lautzeit_gesamt_in_sek", type: "number", unit: "sek" },
             { name: "restzeit_sek", type: "number", unit: "sek" },
             { name: "fortschritt", type: "number", unit: "%" },
@@ -437,6 +437,10 @@ class Gartenbewaesserung extends utils.Adapter {
         this.ventile.forEach((ventil) => {
             if (ventil.active) {
                 if (ventil.end) {
+                    this.log.debug("Diff:" + ventil.end.diff(moment()));
+                    this.log.debug("Duration:" + moment.duration(ventil.end.diff(moment())));
+                    this.log.debug("Abs:" + moment.duration(ventil.end.diff(moment())).abs());
+                    this.log.debug("Format:" + moment.duration(ventil.end.diff(moment())).abs().format("mm:ss"));
                     this.setState("status." + ventil.id + ".restzeit", moment.duration(ventil.end.diff(moment())).abs().format("mm:ss", { trim: false }), true);
                     this.setState("status." + ventil.id + ".restzeit_sek", Number(Math.abs(moment.duration(ventil.end.diff(moment())).asSeconds()).toFixed(0)), true);
                     this.setState(
