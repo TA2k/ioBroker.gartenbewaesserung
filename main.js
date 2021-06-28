@@ -667,7 +667,7 @@ class Gartenbewaesserung extends utils.Adapter {
                 }
                 if (this.times && this.times.sunset) {
                     this.setState("status.startAbend", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").toLocaleString(), true);
-                    this.setState("status.startAbendTimestamp", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").unix()), true;
+                    this.setState("status.startAbendTimestamp", moment(this.times.sunset.toISOString()).add(this.config.minSonnenuntergang, "minutes").unix(), true);
                 }
                 resolve();
             } catch (error) {
