@@ -546,9 +546,9 @@ class Gartenbewaesserung extends utils.Adapter {
             this.setState("status." + ventil.id + ".active", false, true);
             this.setState("control." + ventil.id + "_aktiv", false, true);
             this.setState("status." + ventil.id + ".ende", null, true);
-            this.setState("status." + ventil.id + ".fortschritt", null, true);
-            this.setState("status." + ventil.id + ".restzeit", null, true);
-            this.setState("status." + ventil.id + ".restzeit_sek", null, true);
+            this.setState("status." + ventil.id + ".fortschritt", 100, true);
+            this.setState("status." + ventil.id + ".restzeit", "0:00", true);
+            this.setState("status." + ventil.id + ".restzeit_sek", 0, true);
             ventil.active = false;
             ventil.end = "";
             resolve();
