@@ -500,8 +500,8 @@ class Gartenbewaesserung extends utils.Adapter {
                 this.log.info("Start " + ventil.id + " in " + this.currentTimeoutTime / 1000 + "sek");
                 const timeoutIdStart = setTimeout(async () => {
                     const end = moment().add(ventil.dauer * 60, "second");
-                    this.setState("status." + ventil.id + ".ende", end.toLocaleString(), false);
-                    this.setState("status." + ventil.id + ".endeTimestamp", end.unix(), false);
+                    this.setState("status." + ventil.id + ".ende", end.toLocaleString(), true);
+                    this.setState("status." + ventil.id + ".endeTimestamp", end.unix(), true);
                     ventil.end = end;
                     await this.activateVentil(ventil);
                     this.updateVentileStatus();
