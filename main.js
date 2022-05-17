@@ -743,6 +743,7 @@ class Gartenbewaesserung extends utils.Adapter {
      * @param {() => void} callback
      */
     async onUnload(callback) {
+        this.setState("info.connection", false, true);
         try {
             await this.stopVentile();
             await this.stopBewaesserung();
